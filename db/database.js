@@ -6,6 +6,7 @@ const db = new sqlite3.Database('sightings.db', (err) => {
         throw err;
     } else {
         console.log("connected to the SQLite database.");
+        db.run("PRAGMA foreign_keys = ON");
         // create sightings table
         // include gps research in report on accuracy and coords
         // CHECK constraints are used for security purposes, preventing injection of invalid data
@@ -29,6 +30,8 @@ const db = new sqlite3.Database('sightings.db', (err) => {
                 }
             });
 
+            // seperate table to hold the images for each sighting
+            // FK to sightings table, many to one relationship
             db.run(`CREATE TABLE sightings_images (
                 id Integer PRIMARY KEY AUTOINCREMENT,
                 sighting_id INTEGER NOT NULL,
