@@ -7,5 +7,10 @@ const port = 3000;
 
 
 window.addEventListener('load', function(){
-
+    
+   
+    // get sightings from database
+    app.get('/sightings', async (req, res) => {
+        res.json(await db.query('SELECT * FROM sightings'));
+    }) 
 })
