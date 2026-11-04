@@ -28,7 +28,21 @@ const db = new sqlite3.Database('sightings.db', (err) => {
                     console.error("Table 'sightings' created.");
                 }
             });
+
+            db.run(`CREATE TABLE sightings_images (
+                id Integer PRIMARY KEY AUTOINCREMENT,
+                sighting_id INTEGER NOT NULL,
+                image_path TEXT NOT NULL, 
+                FOREIGN KEY (sighting_id) REFERENCES sightings(id) ON DELETE CASCADE`, 
+            (err) => {
+                if (err) {
+                    console.error('Table sightings_images already exists');
+                } else {
+                    console.error("Table 'sightings_images' created.");
+                }
+            })
         }
+
 });
 
 module.exports = db;
