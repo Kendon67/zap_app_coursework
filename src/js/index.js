@@ -60,3 +60,11 @@ async function getAllSightings(req) {
     }
     return { status, data };
 }
+
+async function getSightingById(req) {
+
+} 
+
+async function postSighting(req) {
+    
+}
