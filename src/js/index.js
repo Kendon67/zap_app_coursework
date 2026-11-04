@@ -11,12 +11,15 @@ window.addEventListener('load', function(){
    
     // get sightings from database
     app.get('/sightings', async (req, res) => {
-        res.json(await db.query('SELECT * FROM sightings'));
+        const {status, data} = await db.getAllSightings(req); 
+        res.status(status);
+        if (data) res.json(data);
+        else res.end(); 
     }) 
 
     // get a target sighting by id
     app.get('/sightings/:id', async (req, res) => {
-        
+
     })
 
     // post new sighting to database
