@@ -36,7 +36,7 @@ const db = new sqlite3.Database('sightings.db', (err) => {
                 id Integer PRIMARY KEY AUTOINCREMENT,
                 sighting_id INTEGER NOT NULL,
                 image_path TEXT NOT NULL, 
-                FOREIGN KEY (sighting_id) REFERENCES sightings(id) ON DELETE CASCADE`, 
+                FOREIGN KEY (sighting_id) REFERENCES sightings(id) ON DELETE CASCADE)`, 
             (err) => {
                 if (err) {
                     console.error('Table sightings_images already exists');
