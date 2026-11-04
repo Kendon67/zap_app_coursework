@@ -11,7 +11,7 @@ window.addEventListener('load', function(){
    
     // get sightings from database
     app.get('/sightings', async (req, res) => {
-        const {status, data} = await db.getAllSightings(req); 
+        const {status, data} = await getAllSightings(req); 
         res.status(status);
         if (data) res.json(data);
         else res.end(); 
@@ -24,6 +24,10 @@ window.addEventListener('load', function(){
 
     // post new sighting to database
     app.post('/sightings/new', async (req, res) => {
+        const {status, data} = await postSighting(req);
+        res.status(status);
+        if (data) res.json(data);
+        else res.end();
     })
 
     // delete sighting from the database
