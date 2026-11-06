@@ -45,7 +45,6 @@ const db = new sqlite3.Database('sightings.db', (err) => {
                 }
             })
         }
-
 });
 
 module.exports = db;

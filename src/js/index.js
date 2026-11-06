@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const db = require('./db/database');
+const db = require('../../db/database');
 
 const app = express();
 const port = 3000;
@@ -66,5 +66,9 @@ async function getSightingById(req) {
 } 
 
 async function postSighting(req) {
-    
+
 }
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
