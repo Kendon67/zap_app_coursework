@@ -40,6 +40,7 @@ app.put('/sightings/:id', async (req, res) => {
 
 })
 
+// get all sightings
 async function getAllSightings(req) {
     let status = 500, data = null;
     try {
@@ -67,6 +68,7 @@ async function getAllSightings(req) {
     return { status, data };
 }
 
+// get sighting by a given id
 async function getSightingById(req) {
     let status = 500, data = null;
     try {
@@ -76,7 +78,7 @@ async function getSightingById(req) {
                 if (!err) {
                     if (rows.length > 0) {
                         status = 200, data = {
-                            sightings: rows[0]
+                            sightings: rows
                         };
                     } else {
                         status = 204;
