@@ -10,7 +10,7 @@ app.get('/sightings', async (req, res) => {
     const { status, data } = await getAllSightings(req);
     res.status(status);
     if (data) res.json(data);
-    else res.end();
+    else res.end(); 
 })
 
 // get a target sighting by id

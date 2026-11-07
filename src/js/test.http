@@ -1,0 +1,2 @@
+### Get all sightings
+GET http://localhost:3000/sightings
