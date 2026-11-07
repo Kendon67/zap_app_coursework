@@ -133,7 +133,9 @@ function generateCuuid(){
 }
 
 function getDate(){
-
+    const date = new Date();
+    let dateString = date.toISOString();
+    return dateString;
 }
 
 function getGeolocation(){
