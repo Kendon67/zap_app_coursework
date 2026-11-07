@@ -128,6 +128,18 @@ async function postSighting(req) {
     return { status, data };
 }
 
+function generateCuuid(){
+    return crypto.randomUUID();
+}
+
+function getDate(){
+
+}
+
+function getGeolocation(){
+
+}
+
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
