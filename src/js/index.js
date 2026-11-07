@@ -96,8 +96,28 @@ async function getSightingById(req) {
     return { status, data };
 } 
 
+// TODO: implement input sanitization and validation
 async function postSighting(req) {
+    let status = 500, data = null;
+    try {
+        await new Promise((resolve, reject) => {
+            const sql = `INSERT INTO sightings (species, latitude,longitude, gps_accuracy, 
+            date, status, mortality_type, notes) VALUES (?, ?, ?, ?)`
 
+            db.run(sql, [req.body.species, req.body.latitude, req.body.longitude, req.body.gps_accuracy], function(err, result) {
+                if (!err) {
+                    status = 201, data = {'id': this.lastID};
+                    resolve();
+                }  else {
+                    status = 400;
+                    reject(err);
+                }
+            });
+        });
+    } catch (err) {
+        console.error(err);
+    }
+    return {status, data};
 }
 
 app.listen(port, () => {
