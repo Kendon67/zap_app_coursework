@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const db = require('../../db/database');
+const db = require('../db/database');
 
 const app = express();
+app.use(bodyParser.urlencoded({extended: false}));
 const port = 3000;
 
 // get sightings from database
@@ -36,7 +37,6 @@ app.put('/sightings/:id', async (req, res) => {
 
 })
 
-//TODO: insert catch for if theres an error
 async function getAllSightings(req) {
     let status = 500, data = null;
     try {
@@ -51,8 +51,11 @@ async function getAllSightings(req) {
                     } else {
                         status = 204;
                     }
+                    resolve();
+                } else{
+                    console.error(err);
+                    reject(err);
                 }
-                resolve();
             });
         });
     } catch (err) {

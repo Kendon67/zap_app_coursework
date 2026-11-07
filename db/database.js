@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 
-const db = new sqlite3.Database('sightings.db', (err) => {
+const db = new sqlite3.Database('sightings.sqlite', (err) => {
     if (err) {
         console.error(err.message);
         throw err;
@@ -47,6 +47,5 @@ const db = new sqlite3.Database('sightings.db', (err) => {
         }
 });
 
-module.exports = db;
 
-//TODO: Implement a sighting images table as a foreign key for the sightings table
+module.exports = db;
