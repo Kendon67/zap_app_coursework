@@ -128,10 +128,13 @@ async function postSighting(req) {
     return { status, data };
 }
 
+// generate unique cuuid 
 function generateCuuid(){
     return crypto.randomUUID();
 }
 
+// gets date and return it in ISO format
+// ISO format better for scientific research
 function getDate(){
     const date = new Date();
     let dateString = date.toISOString();
