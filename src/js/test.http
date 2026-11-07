@@ -6,3 +6,10 @@ GET http://localhost:3000/sightings/2
 
 ### Get a sighting that doesn't exist
 GET http://localhost:3000/sightings/999
+
+### POST sighting 
+### Create a new sighting
+POST http://localhost:3000/sightings/new
+Content-Type: application/x-www-form-urlencoded
+
+client_uuid=uuid-003&species=Pangolin&latitude=-24.6450&longitude=25.9320&gps_accuracy=4.8&date=2026-11-07&status=Alive&mortality_type=&notes=Pangolin spotted near woodland
