@@ -1,2 +1,8 @@
 ### Get all sightings
 GET http://localhost:3000/sightings
+
+### Get sighting by ID
+GET http://localhost:3000/sightings/2
+
+### Get a sighting that doesn't exist
+GET http://localhost:3000/sightings/999

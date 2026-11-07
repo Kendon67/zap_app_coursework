@@ -16,7 +16,10 @@ app.get('/sightings', async (req, res) => {
 
 // get a target sighting by id
 app.get('/sightings/:id', async (req, res) => {
-
+    const { status, data } = await getSightingById(req);
+    res.status(status);
+    if (data) res.json(data);
+    else res.end();
 })
 
 // post new sighting to database
@@ -65,7 +68,30 @@ async function getAllSightings(req) {
 }
 
 async function getSightingById(req) {
-
+    let status = 500, data = null;
+    try {
+        await new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM sightings WHERE id = ?`;
+            db.all(sql, [req.params.id], (err, rows) => {
+                if (!err) {
+                    if (rows.length > 0) {
+                        status = 200, data = {
+                            sightings: rows[0]
+                        };
+                    } else {
+                        status = 204;
+                    }
+                    resolve();
+                } else{
+                    console.error(err);
+                    reject(err);
+                }
+            });
+        });
+    } catch (err) {
+        console.error(err);
+    }
+    return { status, data };
 } 
 
 async function postSighting(req) {
