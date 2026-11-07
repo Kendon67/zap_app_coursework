@@ -1,9 +1,9 @@
-const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
 
-const dbPath = path.join(__dirname, 'sightings.sqlite');
+const dbPath = path.join(__dirname, '../db/sightings.sqlite');
 
-console.log('Using database:', dbPath);
+console.log('Database path:', dbPath);
 
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
