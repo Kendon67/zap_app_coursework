@@ -39,7 +39,7 @@
     border-radius: 6px;
     display: grid;
     grid-template-rows: max-content 200px 1fr;
-    padding: 1rem;
+    padding: .5rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
 }
