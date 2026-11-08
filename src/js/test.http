@@ -12,4 +12,4 @@ GET http://localhost:3000/sightings/999
 POST http://localhost:3000/sightings/new
 Content-Type: application/x-www-form-urlencoded
 
-client_uuid=uuid-003&species=Pangolin&latitude=-24.6450&longitude=25.9320&gps_accuracy=4.8&date=2026-11-07&status=Alive&mortality_type=&notes=Pangolin spotted near woodland
+client_uuid=uuid-008&species=Pangolin&latitude=-24.6450&longitude=25.9320&gps_accuracy=4.8&date=2026-11-07&status=Alive&mortality_type=null&notes=Pangolin spotted near woodland

@@ -1,0 +1,8 @@
+{
+    "display": "standalone",
+    "short_name": "Zap App",
+    "name": "Pangolin Zapp App",
+    "orientation": "portrait",
+    "start_url": "/",
+    "desription": "An app used to view and record pangolin sightings in the area."
+}
