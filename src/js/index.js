@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const db = require('../db/database');
 
 const app = express();
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 const port = 3000;
 
 // get sightings from database
@@ -11,7 +11,7 @@ app.get('/sightings', async (req, res) => {
     const { status, data } = await getAllSightings(req);
     res.status(status);
     if (data) res.json(data);
-    else res.end(); 
+    else res.end();
 })
 
 // get a target sighting by id
@@ -56,7 +56,7 @@ async function getAllSightings(req) {
                         status = 204;
                     }
                     resolve();
-                } else{
+                } else {
                     console.error(err);
                     reject(err);
                 }
@@ -84,7 +84,7 @@ async function getSightingById(req) {
                         status = 204;
                     }
                     resolve();
-                } else{
+                } else {
                     console.error(err);
                     reject(err);
                 }
@@ -94,30 +94,55 @@ async function getSightingById(req) {
         console.error(err);
     }
     return { status, data };
-} 
+}
 
 // TODO: implement input sanitization and validation
+// TODO: generate specific insert values (cuiid, date, coordinates)
 async function postSighting(req) {
     let status = 500, data = null;
     try {
         await new Promise((resolve, reject) => {
-            const sql = `INSERT INTO sightings (species, latitude,longitude, gps_accuracy, 
-            date, status, mortality_type, notes) VALUES (?, ?, ?, ?)`
+            const sql = `
+                INSERT INTO sightings (client_uuid, species, latitude, longitude,
+                    gps_accuracy, date, status, mortality_type, notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-            db.run(sql, [req.body.species, req.body.latitude, req.body.longitude, req.body.gps_accuracy], function(err, result) {
-                if (!err) {
-                    status = 201, data = {'id': this.lastID};
-                    resolve();
-                }  else {
+            db.run(sql, [req.body.client_uuid, req.body.species, req.body.latitude,
+                req.body.longitude, req.body.gps_accuracy, req.body.date, req.body.status, 
+                req.body.mortality_type || null,req.body.notes], 
+                function (err) {
+                if (err) {
                     status = 400;
+                    console.error('Insert error:', err.message);
                     reject(err);
+                } else {
+                    status = 201;
+                    data = { id: this.lastID };
+                    resolve();
                 }
             });
         });
     } catch (err) {
         console.error(err);
     }
-    return {status, data};
+    return { status, data };
+}
+
+// generate unique cuuid 
+function generateCuuid(){
+    return crypto.randomUUID();
+}
+
+// gets date and return it in ISO format
+// ISO format better for scientific research
+function getDate(){
+    const date = new Date();
+    let dateString = date.toISOString();
+    return dateString;
+}
+
+function getGeolocation(){
+
 }
 
 app.listen(port, () => {
