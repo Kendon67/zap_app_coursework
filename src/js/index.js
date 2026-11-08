@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const db = require('../db/database');
 
+const crypto = require('crypto');
+
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 const port = 3000;
