@@ -33,13 +33,15 @@ app.post('/sightings/new', async (req, res) => {
 })
 
 // delete sighting from the database
-app.delete('/sightings/:id', async (req, res) => {
-
+app.delete('/sightings', async (req, res) => {
+    res.status(405);
+    res.end();
 })
 
 // alter sighting - probably unused? will need to be handled anyway 
-app.put('/sightings/:id', async (req, res) => {
-
+app.put('/sightings', async (req, res) => {
+    res.status(405);
+    res.end();
 })
 
 // get all sightings
