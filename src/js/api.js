@@ -4,8 +4,11 @@ const db = require('../db/database');
 
 const crypto = require('crypto');
 
+const cors = require('cors');
+
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
 const port = 3000;
 
 // get sightings from database

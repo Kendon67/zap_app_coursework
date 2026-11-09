@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Kendon67/zap_app_coursework#readme",
   "dependencies": {
+    "cors": "^2.8.6",
     "sqlite3": "^6.0.1"
   }
 }
