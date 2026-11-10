@@ -1,154 +1,46 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const db = require('../db/database');
 
-const crypto = require('crypto');
+document.addEventListener('DOMContentLoaded', async() => {
+    const sightingsContainer = document.querySelector('#sightings_container');
+    let sightingsArray = [];
 
-const app = express();
-app.use(bodyParser.urlencoded({ extended: false }));
-const port = 3000;
 
-// get sightings from database
-app.get('/sightings', async (req, res) => {
-    const { status, data } = await getAllSightings(req);
-    res.status(status);
-    if (data) res.json(data);
-    else res.end();
-})
+    // query the API to fetch sightings from the db
+    async function fetchSightings(){
+        try{
+            const response = await fetch('http://localhost:3000/sightings'); //this will need changing
+            
+            if (!response.ok){
+                // fail state
+            } else if (response.status === 204){
+                // no data state
+            }
 
-// get a target sighting by id
-app.get('/sightings/:id', async (req, res) => {
-    const { status, data } = await getSightingById(req);
-    res.status(status);
-    if (data) res.json(data);
-    else res.end();
-})
-
-// post new sighting to database
-app.post('/sightings/new', async (req, res) => {
-    const { status, data } = await postSighting(req);
-    res.status(status);
-    if (data) res.json(data);
-    else res.end();
-})
-
-// delete sighting from the database
-app.delete('/sightings', async (req, res) => {
-    res.status(405);
-    res.end();
-})
-
-// alter sighting - probably unused? will need to be handled anyway 
-app.put('/sightings', async (req, res) => {
-    res.status(405);
-    res.end();
-})
-
-// get all sightings
-async function getAllSightings(req) {
-    let status = 500, data = null;
-    try {
-        await new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM sightings`;
-            db.all(sql, [], (err, rows) => {
-                if (!err) {
-                    if (rows.length > 0) {
-                        status = 200, data = {
-                            sightings: rows
-                        };
-                    } else {
-                        status = 204;
-                    }
-                    resolve();
-                } else {
-                    console.error(err);
-                    reject(err);
-                }
-            });
-        });
-    } catch (err) {
-        console.error(err);
+            const data = await response.json();
+            sightingsArray = data.sightings;
+            loadSightings();
+        } catch (e){
+            console.error(e);
+        }
     }
-    return { status, data };
-}
 
-// get sighting by a given id
-async function getSightingById(req) {
-    let status = 500, data = null;
-    try {
-        await new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM sightings WHERE id = ?`;
-            db.all(sql, [req.params.id], (err, rows) => {
-                if (!err) {
-                    if (rows.length > 0) {
-                        status = 200, data = {
-                            sightings: rows
-                        };
-                    } else {
-                        status = 204;
-                    }
-                    resolve();
-                } else {
-                    console.error(err);
-                    reject(err);
-                }
-            });
+    // uses fetched data to create cards for display to the user
+    async function loadSightings(){
+        sightingsContainer.innerHTML = '';
+
+        sightingsArray.forEach(sighting => {
+            const sightingCard = document.createElement('div');
+            sightingCard.classList.add('sighting');
+            sightingCard.innerHTML = `
+                <h3>${sighting.species}</h3>
+                <p>Status: ${sighting.status}</p>
+                <p>Date: ${sighting.date}</p>
+                <p>Latitude: ${sighting.latitude}</p>
+                <p>Longitude: ${sighting.longitude}</p>
+            `;
+
+            sightingsContainer.appendChild(sightingCard);
         });
-    } catch (err) {
-        console.error(err);
     }
-    return { status, data };
-}
 
-// TODO: implement input sanitization and validation
-// TODO: generate specific insert values (cuiid, date, coordinates)
-async function postSighting(req) {
-    let status = 500, data = null;
-    try {
-        await new Promise((resolve, reject) => {
-            const sql = `
-                INSERT INTO sightings (client_uuid, species, latitude, longitude,
-                    gps_accuracy, date, status, mortality_type, notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-            db.run(sql, [req.body.client_uuid, req.body.species, req.body.latitude,
-                req.body.longitude, req.body.gps_accuracy, req.body.date, req.body.status, 
-                req.body.mortality_type || null,req.body.notes], 
-                function (err) {
-                if (err) {
-                    status = 400;
-                    console.error('Insert error:', err.message);
-                    reject(err);
-                } else {
-                    status = 201;
-                    data = { id: this.lastID };
-                    resolve();
-                }
-            });
-        });
-    } catch (err) {
-        console.error(err);
-    }
-    return { status, data };
-}
-
-// generate unique cuuid 
-function generateCuuid(){
-    return crypto.randomUUID();
-}
-
-// gets date and return it in ISO format
-// ISO format better for scientific research
-function getDate(){
-    const date = new Date();
-    let dateString = date.toISOString();
-    return dateString;
-}
-
-function getGeolocation(){
-
-}
-
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    await fetchSightings();
 });
