@@ -1,5 +1,5 @@
 <?php
-require_once '../../db/database.php';
+require_once '../db/database.php';
 
 class sightingsAPI
 {
@@ -17,6 +17,7 @@ class sightingsAPI
     {
         $this->database->close();
     }
+
 
     // handle requests made to the sightings API
     public function handle_request($method)

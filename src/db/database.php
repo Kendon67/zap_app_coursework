@@ -10,11 +10,7 @@ class Database{
             exit();
         } 
     }
-
-    public function __destruct(){
-        $this->database->close();
-    }
-
+    
     public static function getDbInstance(): ?Database{
         if (self::$instance === null){
             self::$instance = new Database();

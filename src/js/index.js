@@ -7,8 +7,7 @@ document.addEventListener('DOMContentLoaded', async() => {
     // query the API to fetch sightings from the db
     async function fetchSightings(){
         try{
-            const response = await fetch('http://localhost:3000/sightings'); //this will need changing
-            
+            const response = await fetch('../api/api.php');         
             if (!response.ok){
                 // fail state
             } else if (response.status === 204){
@@ -16,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async() => {
             }
 
             const data = await response.json();
-            sightingsArray = data.sightings;
+            sightingsArray = data.results;
             loadSightings();
         } catch (e){
             console.error(e);
