@@ -43,4 +43,24 @@ document.addEventListener('DOMContentLoaded', async() => {
     }
 
     await fetchSightings();
+
+    // upload a new sighting to the db
+    async function uploadSighting(){
+        try{
+            const response = await fetch('http://localhost:3000/sightings', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                
+            });
+
+            if (!response.ok){
+                // fail state
+            } 
+
+        } catch (e){
+            console.error(e);
+        }
+    }
 });
