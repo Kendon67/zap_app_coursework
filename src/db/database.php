@@ -1,0 +1,28 @@
+<?php
+class Database{
+    private mysqli $database;
+    private static ?Database $instance = null;
+
+    private function __construct(){
+        $this->database = new mysqli("localhost", "cm2252_sightings", ".qwertyuio", "cm2252_pangolin_sightings");
+        if ($this->database->connect_errno > 0) {
+            http_response_code(500);
+            exit();
+        } 
+    }
+
+    public function __destruct(){
+        $this->database->close();
+    }
+
+    public static function getDbInstance(): ?Database{
+        if (self::$instance === null){
+            self::$instance = new Database();
+        }
+        return self::$instance;
+    }
+
+    public function getConn(): mysqli{
+        return $this->database;
+    }
+} ?>
