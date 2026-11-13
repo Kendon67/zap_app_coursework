@@ -90,7 +90,10 @@ document.addEventListener('DOMContentLoaded', async() => {
         } catch (e) {
             console.error(e);
         }
+    }
 
+    function getUUID(){
+        const uuid = crypto.randomUUID();
     }
     
     function showPosition(position){
