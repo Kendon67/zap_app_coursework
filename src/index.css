@@ -180,3 +180,9 @@ button {
     cursor: pointer;
 }
 
+/* upload form styling*/
+.upload_form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
