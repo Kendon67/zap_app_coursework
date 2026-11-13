@@ -46,6 +46,37 @@
         </div>
     </main>
 
+    <form class="upload_form" id="upload_form">
+
+        <h2>Record a Pangolin Sighting</h2>
+
+        <label for="species">Species:</label>
+        <input type="text" id="species" name="species" required>
+
+        <label for="status">Status:</label>
+        <select id="status" name="status" required>
+            <option value="">Select status</option>
+            <option value="Alive">Alive</option>
+            <option value="Deceased">Deceased</option>
+            <option value="Unknown">Unknown</option>
+        </select>
+
+        <label for="mortality_type">Mortality type:</label>
+        <select id="mortality_type" name="mortality_type">
+            <option value="">Not applicable</option>
+            <option value="Natural">Natural</option>
+            <option value="Roadkill">Roadkill</option>
+            <option value="Poaching">Poaching</option>
+            <option value="Other">Other</option>
+            <option value="Unknown">Unknown</option>
+        </select>
+
+        <label for="notes">Additional notes:</label>
+        <textarea id="notes" name="notes" rows="4"></textarea>
+
+        <button type="submit">Submit Sighting</button>
+
+    </form>
 </body>
 
 </html>

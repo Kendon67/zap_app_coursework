@@ -28,6 +28,7 @@ class sightingsAPI
                 $this->getAllSightings();
                 break;
             case 'POST':
+                $this->addSighting();
                 break;
             default:
                 $this->statuscode = 405;
