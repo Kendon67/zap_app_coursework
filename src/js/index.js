@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', async() => {
     const sightingsContainer = document.querySelector('#sightings_container');
     let sightingsArray = [];
 
+    // global gps coords for map and location
+    let lat;
+    let long;
+    let accuracy;
+
     const uploadFormContainer = document.getElementById("upload_form_container");
     const uploadForm = document.getElementById("upload_form");
     const uploadBtn = document.getElementById("upload_button");
@@ -77,5 +82,20 @@ document.addEventListener('DOMContentLoaded', async() => {
             alert("Something Went Wrong. Please Try Again");
             console.error(e);
         }
+    }
+
+    function getLocation(){
+        try {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } catch (e) {
+            console.error(e);
+        }
+
+    }
+    
+    function showPosition(position){
+        lat = position.coords.latitude;
+        long = position.coords.long
+        accuracy = position.coords.accuracy
     }
 });
