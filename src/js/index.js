@@ -3,6 +3,20 @@ document.addEventListener('DOMContentLoaded', async() => {
     const sightingsContainer = document.querySelector('#sightings_container');
     let sightingsArray = [];
 
+    const uploadFormContainer = document.getElementById("upload_form_container");
+    const uploadForm = document.getElementById("upload_form");
+    const uploadBtn = document.getElementById("upload_button");
+    const submitBtn = document.getElementById("submit_btn");
+
+    uploadBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        uploadForm.style.display = "flex";
+    })
+
+    submitBtn.addEventListener("submit", (e) => {
+        e.preventDefault();
+        uploadSighting();
+    })
 
     // query the API to fetch sightings from the db
     async function fetchSightings(){
@@ -45,20 +59,22 @@ document.addEventListener('DOMContentLoaded', async() => {
 
     // upload a new sighting to the db
     async function uploadSighting(){
+        const sightingData = new FormData(); //sighting fomr
         try{
-            const response = await fetch('http://localhost:3000/sightings', {
+            const response = await fetch('../api/api.php', {
                 method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                
+                body: sightingData
             });
 
-            if (!response.ok){
-                // fail state
-            } 
-
+            if (response.ok){
+                alert('Sighting Successfully Uploaded!');
+                uploadFormContainer.style.display = "none";
+                await fetchSightings();
+            } else{
+                alert("Something went wrong") // update this
+            }
         } catch (e){
+            alert("Something Went Wrong. Please Try Again");
             console.error(e);
         }
     }
