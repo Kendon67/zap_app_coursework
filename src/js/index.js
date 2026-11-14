@@ -1,5 +1,5 @@
 
-document.addEventListener('DOMContentLoaded', async() => {
+document.addEventListener('DOMContentLoaded', async () => {
     const sightingsContainer = document.querySelector('#sightings_container');
     let sightingsArray = [];
 
@@ -11,38 +11,37 @@ document.addEventListener('DOMContentLoaded', async() => {
     const uploadFormContainer = document.getElementById("upload_form_container");
     const uploadForm = document.getElementById("upload_form");
     const uploadBtn = document.getElementById("upload_button");
-    const submitBtn = document.getElementById("submit_btn");
 
     uploadBtn.addEventListener("click", (e) => {
         e.preventDefault();
         uploadForm.style.display = "flex";
     })
 
-    submitBtn.addEventListener("submit", (e) => {
+    uploadForm.addEventListener("submit", (e) => {
         e.preventDefault();
         uploadSighting();
     })
 
     // query the API to fetch sightings from the db
-    async function fetchSightings(){
-        try{
-            const response = await fetch('../api/api.php');         
-            if (!response.ok){
+    async function fetchSightings() {
+        try {
+            const response = await fetch('../api/api.php');
+            if (!response.ok) {
                 // fail state
-            } else if (response.status === 204){
+            } else if (response.status === 204) {
                 // no data state
             }
 
             const data = await response.json();
             sightingsArray = data.results;
             loadSightings();
-        } catch (e){
+        } catch (e) {
             console.error(e);
         }
     }
 
     // uses fetched data to create cards for display to the user
-    async function loadSightings(){
+    async function loadSightings() {
         sightingsContainer.innerHTML = '';
 
         sightingsArray.forEach(sighting => {
@@ -63,42 +62,53 @@ document.addEventListener('DOMContentLoaded', async() => {
     await fetchSightings();
 
     // upload a new sighting to the db
-    async function uploadSighting(){
-        const sightingData = new FormData(); //sighting fomr
-        try{
+    async function uploadSighting() {
+        try {
+            const sightingData = new FormData(uploadForm); 
+            await getLocation();
+
+            sightingData.append("latitude", lat);
+            sightingData.append("longitude", long);
+            sightingData.append("gps_accuracy", accuracy);
+            sightingData.append("client_uuid", getUUID());
+
             const response = await fetch('../api/api.php', {
                 method: "POST",
                 body: sightingData
             });
 
-            if (response.ok){
+            if (response.ok) {
                 alert('Sighting Successfully Uploaded!');
                 uploadFormContainer.style.display = "none";
                 await fetchSightings();
-            } else{
+            } else {
                 alert("Something went wrong") // update this
             }
-        } catch (e){
+        } catch (e) {
             alert("Something Went Wrong. Please Try Again");
             console.error(e);
         }
     }
 
-    function getLocation(){
-        try {
-            navigator.geolocation.getCurrentPosition(showPosition);
-        } catch (e) {
-            console.error(e);
-        }
+    function getLocation() {
+        return new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    showPosition(position);
+                    resolve();
+                },
+                reject
+            );
+        });
     }
 
-    function getUUID(){
-        const uuid = crypto.randomUUID();
+    function getUUID() {
+        return crypto.randomUUID();
     }
-    
-    function showPosition(position){
+
+    function showPosition(position) {
         lat = position.coords.latitude;
-        long = position.coords.long
+        long = position.coords.longitude
         accuracy = position.coords.accuracy
     }
 });
