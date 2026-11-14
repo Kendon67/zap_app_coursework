@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let sightingsArray = [];
     console.log("loaded!"); 
 
-    // global gps coords for map and location
+    // gps and date variables for use in formdata
     let lat;
     let long;
     let accuracy;
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             sightingData.append("longitude", long);
             sightingData.append("gps_accuracy", accuracy);
             sightingData.append("client_uuid", getUUID());
-            sightingData.append("date", date);
+            sightingData.append("date", getDate());
 
             const response = await fetch('../api/api.php', {
                 method: "POST",
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     function getDate(){
-        date = new Date().toISOString().split('T')[0];
+        const date = new Date().toISOString().split('T')[0];
         return date;
     }
 
