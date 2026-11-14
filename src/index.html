@@ -55,21 +55,13 @@
         <label for="species">Species:</label>
         <input type="text" id="species" name="species" required>
 
-            <legend>Status:</legend>        
-            <label>
-                <input type="radio" name="status" value="Alive" required>
-                Alive
-            </label>
-        
-            <label>
-                <input type="radio" name="status" value="Deceased">
-                Deceased
-            </label>
-        
-            <label>
-                <input type="radio" name="status" value="Unknown">
-                Unknown
-            </label>
+        <label for="status">Status:</label>
+        <select id="status" name="status" required>
+            <option value="">Select status</option>
+            <option value="Alive">Alive</option>
+            <option value="Deceased">Deceased</option>
+            <option value="Unknown">Unknown</option>
+        </select>
 
         <label for="mortality_type">Mortality type:</label>
         <select id="mortality_type" name="mortality_type">

@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const sightingsContainer = document.querySelector('#sightings_container');
     let sightingsArray = [];
+    console.log("loaded!"); 
 
     // global gps coords for map and location
     let lat;
@@ -19,8 +20,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     uploadForm.addEventListener("submit", (e) => {
         e.preventDefault();
+        console.log("submitted!");
         uploadSighting();
-    })
+    });
 
     // query the API to fetch sightings from the db
     async function fetchSightings() {
@@ -71,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             sightingData.append("longitude", long);
             sightingData.append("gps_accuracy", accuracy);
             sightingData.append("client_uuid", getUUID());
+            sightingData.append("date", date);
 
             const response = await fetch('../api/api.php', {
                 method: "POST",
@@ -104,6 +107,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function getUUID() {
         return crypto.randomUUID();
+    }
+    
+    function getDate(){
+        date = new Date().toISOString().split('T')[0];
+        return date;
     }
 
     function showPosition(position) {
