@@ -182,7 +182,7 @@ button {
 
 /* upload form styling*/
 .upload_form {
-    display: none;
+    display: flex;
     position: fixed;
     z-index: 1;
     left: 0;
