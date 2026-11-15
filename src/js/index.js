@@ -2,7 +2,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const sightingsContainer = document.querySelector('#sightings_container');
     let sightingsArray = [];
-    console.log("loaded!"); 
 
     // gps and date variables for use in formdata
     let lat;
@@ -10,8 +9,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     let accuracy;
 
     const uploadFormContainer = document.getElementById("upload_form_container");
-    const uploadForm = document.getElementById("upload_form");
-    const uploadBtn = document.getElementById("upload_button");
+    const statusRadios = document.querySelectorAll('input[name="status_radio"]');
+    const mortalitySelection = document.getElementById('mortality_type');
+    const uploadForm = document.getElementById('upload_form');
+    const uploadBtn = document.getElementById('upload_btn');
+
+    // hide mortality type box if status set to alive
+    statusRadios.forEach(radio => {
+        radio.addEventListener("change", (e) => {
+            if (e.target.value == "Alive"){
+                mortalitySelection.style.display = 'none';
+                mortalitySelection.value = 'null';
+            } else if (e.target.value == "Dead"){
+                mortalitySelection.style.display = 'flex';
+                mortalitySelection.value = '';
+            }
+        });
+    });
 
     uploadBtn.addEventListener("click", (e) => {
         e.preventDefault();

@@ -44,7 +44,7 @@
                 <p>Date: 2023-10-02</p>
             </div>
         </div>
-    <button id="upload_button">Upload Form</button>
+    <button id="upload_btn">Upload Form</button>
     </main>
 
     <div id="upload_form_container" class="upload_form">
@@ -55,18 +55,18 @@
         <label for="species">Species:</label>
         <input type="text" id="species" name="species" required>
 
-        <label for="status">Status:</label>
-        <select id="status" name="status" required>
-            <option value="">Select status</option>
-            <option value="Alive">Alive</option>
-            <option value="Dead">Dead</option>
-            <option value="Unknown">Unknown</option>
-        </select>
+        <label for="status">Status:</label>    
+        <label>
+            <input type="radio" class="status_radio" name="status_radio" value="Alive"> Alive
+          </label>
+          <label>
+            <input type="radio" class="status_radio" name="status_radio" value="Dead"> Dead
+          </label>
 
         <label for="mortality_type">Mortality type:</label>
         <select id="mortality_type" name="mortality_type">
-            <option value="">Not applicable</option>
-            <option value="fence death: electrocution">fence death: electrocution</option>
+            <option value="" disabled selected>Select Mortality Type:</option>
+            <option value="Fence Death: Electrocution">Fence Death: Electrocution</option>
             <option value="Poaching">Poaching</option>
             <option value="Accident">Accident</option>
             <option value="Other">Other</option>
