@@ -94,17 +94,15 @@ class sightingsAPI
         $date = htmlspecialchars(strip_tags(trim($_POST['date'])));
         $status = htmlspecialchars(strip_tags(trim($_POST['status'])));
         $notes = htmlspecialchars(strip_tags(trim($_POST['notes'])));
-        $mortality_type = trim($_POST['mortality_type']);
+        $mortality_type = trim(strip_tags($_POST['mortality_type']));
 
-        // null handling for mort type
-        if ($mortality_type === '') {
-            $mortality_type = null;
-        } else {
-            $mortality_type = htmlspecialchars(strip_tags($mortality_type));
-        }
-
-        $this->validateGeolocation($longitude, $latitude, $gps_accuracy);
-        $this->validateAlphanumeric($species);
+        // perform input validation
+        if(!$this->validateGeolocation($longitude, $latitude, $gps_accuracy) ||
+           !$this->validateMortalityTypes($mortality_type) || 
+           !$this->validateAlphanumeric($species)){
+            $this->statuscode = 400;
+            return;
+           }
 
         $sql = "INSERT INTO `sightings` (client_uuid, species, longitude, latitude, gps_accuracy,
                  date, status, mortality_type, notes) 
@@ -161,10 +159,9 @@ class sightingsAPI
     private function validateAlphanumeric($field)
     {
         if (!preg_match('/^[a-zA-Z0-9 ]+$/', $field)) {
-            $this->statuscode = 400;
-            return;
+            return false;
         }
-
+        return true;
     }
 
     // check posted mort type and check it against the allowed types
@@ -177,9 +174,10 @@ class sightingsAPI
             'Other'
         ];
 
-        if (!in_array($mortality_type, $allowedTypes) && $mortality_type !== 'null') {
-            $this->statuscode = 400;
-            return;
+        if (in_array($mortality_type, $allowedTypes) && $mortality_type !== 'null') {
+            return true;
+        } else{
+            return false;
         }
     }
 
@@ -187,19 +185,17 @@ class sightingsAPI
     private function validateGeolocation($longitude, $latitude, $gps_accuracy)
     {
         if ($longitude === false || $longitude < -180 || $longitude > 180) {
-            $this->statuscode = 400;
-            return;
+            return false;
         }
 
         if ($latitude === false || $latitude < -90 || $latitude > 90) {
-            $this->statuscode = 400;
-            return;
+            return false;
         }
 
         if ($gps_accuracy === false || $gps_accuracy < 0) {
-            $this->statuscode = 400;
-            return;
+            return false;
         }
+        return true;
     }
 }
 
