@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const mortalitySelection = document.getElementById('mortality_type');
     const uploadForm = document.getElementById('upload_form');
     const uploadBtn = document.getElementById('upload_btn');
+    const closeFormBtn = document.getElementById('close_form_btn');
 
     // hide mortality type box if status set to alive
     statusRadios.forEach(radio => {
@@ -29,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     uploadBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        uploadForm.style.display = "flex";
+        uploadFormContainer.style.display = "flex";
     })
 
     uploadForm.addEventListener("submit", (e) => {
@@ -37,6 +38,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log("submitted!");
         uploadSighting();
     });
+
+    closeFormBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        uploadForm.reset();
+        uploadFormContainer.style.display = 'none';
+    })
 
     // query the API to fetch sightings from the db
     async function fetchSightings() {
