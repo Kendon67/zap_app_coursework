@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let accuracy;
 
     const uploadFormContainer = document.getElementById("upload_form_container");
-    const statusRadios = document.querySelectorAll('input[name="status_radio"]');
+    const statusRadios = document.querySelectorAll('input[name="status"]');
     const mortalitySelection = document.getElementById('mortality_type');
     const uploadForm = document.getElementById('upload_form');
     const uploadBtn = document.getElementById('upload_btn');

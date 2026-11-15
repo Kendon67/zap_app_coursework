@@ -65,7 +65,6 @@ class sightingsAPI
     }
 
     // add a sighting to the db
-    // TODO: further data validation checks for security
     public function addSighting()
     {
         if (
@@ -77,7 +76,6 @@ class sightingsAPI
             $_POST['gps_accuracy'],
             $_POST['date'],
             $_POST['status'],
-            $_POST['mortality_type'],
             $_POST['notes']
         )
         ) {
@@ -94,15 +92,27 @@ class sightingsAPI
         $date = htmlspecialchars(strip_tags(trim($_POST['date'])));
         $status = htmlspecialchars(strip_tags(trim($_POST['status'])));
         $notes = htmlspecialchars(strip_tags(trim($_POST['notes'])));
-        $mortality_type = trim(strip_tags($_POST['mortality_type']));
+        $mortality_type = trim(strip_tags($_POST['mortality_type'] ?? ''));
+
+        if ($mortality_type === '') {
+            $mortality_type = null;
+        }
 
         // perform input validation
-        if(!$this->validateGeolocation($longitude, $latitude, $gps_accuracy) ||
-           !$this->validateMortalityTypes($mortality_type) || 
-           !$this->validateAlphanumeric($species)){
+        if (!$this->validateGeolocation($longitude, $latitude, $gps_accuracy)) {
             $this->statuscode = 400;
             return;
-           }
+        }
+
+        if (!$this->validateMortalityTypes($mortality_type)) {
+            $this->statuscode = 400;
+            return;
+        }
+
+        if (!$this->validateAlphanumeric($species)) {
+            $this->statuscode = 400;
+            return;
+        }
 
         $sql = "INSERT INTO `sightings` (client_uuid, species, longitude, latitude, gps_accuracy,
                  date, status, mortality_type, notes) 
@@ -141,7 +151,6 @@ class sightingsAPI
             return false;
         }
         return $stmt;
-
     }
 
     // execute statement
@@ -171,12 +180,11 @@ class sightingsAPI
             'Fence Death: Electrocution',
             'Fence Death: Caught on non-electrified fence',
             'Road Death',
-            'Other'
-        ];
-
-        if (in_array($mortality_type, $allowedTypes) && $mortality_type !== 'null') {
+            'Other'];
+        
+        if ($mortality_type == null || in_array($mortality_type, $allowedTypes)) {
             return true;
-        } else{
+        } else {
             return false;
         }
     }
@@ -201,6 +209,4 @@ class sightingsAPI
 
 $api = new sightingsAPI();
 $api->handle_request($_SERVER['REQUEST_METHOD']);
-/* TODO: 
- * Add error handling to database conn and queries */
 ?>
