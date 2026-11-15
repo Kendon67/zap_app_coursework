@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         radio.addEventListener("change", (e) => {
             if (e.target.value == "Alive"){
                 mortalitySelection.style.display = 'none';
-                mortalitySelection.value = 'null';
+                mortalitySelection.value = '';
             } else if (e.target.value == "Dead"){
                 mortalitySelection.style.display = 'flex';
                 mortalitySelection.value = '';
