@@ -201,3 +201,7 @@ button {
     padding: 20px;
     border: 1px solid #888
 }
+
+#mortality_type {
+    display: none;
+}
