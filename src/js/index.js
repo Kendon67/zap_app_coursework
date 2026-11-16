@@ -1,29 +1,70 @@
 
-document.addEventListener('DOMContentLoaded', async() => {
+document.addEventListener('DOMContentLoaded', async () => {
     const sightingsContainer = document.querySelector('#sightings_container');
     let sightingsArray = [];
 
+    // gps and date variables for use in formdata
+    let lat;
+    let long;
+    let accuracy;
+
+    const uploadFormContainer = document.getElementById("upload_form_container");
+    const statusRadios = document.querySelectorAll('input[name="status"]');
+    const mortalitySelection = document.getElementById('mortality_type');
+    const uploadForm = document.getElementById('upload_form');
+    const uploadBtn = document.getElementById('upload_btn');
+    const closeFormBtn = document.getElementById('close_form_btn');
+
+    // hide mortality type box if status set to alive
+    statusRadios.forEach(radio => {
+        radio.addEventListener("change", (e) => {
+            if (e.target.value == "Alive"){
+                mortalitySelection.style.display = 'none';
+                mortalitySelection.value = '';
+            } else if (e.target.value == "Dead"){
+                mortalitySelection.style.display = 'flex';
+                mortalitySelection.value = '';
+            }
+        });
+    });
+
+    uploadBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        uploadFormContainer.style.display = "flex";
+    })
+
+    uploadForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        console.log("submitted!");
+        uploadSighting();
+    });
+
+    closeFormBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        uploadForm.reset();
+        uploadFormContainer.style.display = 'none';
+    })
 
     // query the API to fetch sightings from the db
-    async function fetchSightings(){
-        try{
-            const response = await fetch('../api/api.php');         
-            if (!response.ok){
+    async function fetchSightings() {
+        try {
+            const response = await fetch('../api/api.php');
+            if (!response.ok) {
                 // fail state
-            } else if (response.status === 204){
+            } else if (response.status === 204) {
                 // no data state
             }
 
             const data = await response.json();
             sightingsArray = data.results;
             loadSightings();
-        } catch (e){
+        } catch (e) {
             console.error(e);
         }
     }
 
     // uses fetched data to create cards for display to the user
-    async function loadSightings(){
+    async function loadSightings() {
         sightingsContainer.innerHTML = '';
 
         sightingsArray.forEach(sighting => {
@@ -44,22 +85,59 @@ document.addEventListener('DOMContentLoaded', async() => {
     await fetchSightings();
 
     // upload a new sighting to the db
-    async function uploadSighting(){
-        try{
-            const response = await fetch('http://localhost:3000/sightings', {
+    async function uploadSighting() {
+        try {
+            const sightingData = new FormData(uploadForm); 
+            await getLocation();
+
+            sightingData.append("latitude", lat);
+            sightingData.append("longitude", long);
+            sightingData.append("gps_accuracy", accuracy);
+            sightingData.append("client_uuid", getUUID());
+            sightingData.append("date", getDate());
+
+            const response = await fetch('../api/api.php', {
                 method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                
+                body: sightingData
             });
 
-            if (!response.ok){
-                // fail state
-            } 
-
-        } catch (e){
+            if (response.ok) {
+                alert('Sighting Successfully Uploaded!');
+                uploadFormContainer.style.display = "none";
+                await fetchSightings();
+            } else {
+                alert("Something went wrong") // update this
+            }
+        } catch (e) {
+            alert("Something Went Wrong. Please Try Again");
             console.error(e);
         }
+    }
+
+    function getLocation() {
+        return new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    showPosition(position);
+                    resolve();
+                },
+                reject
+            );
+        });
+    }
+
+    function getUUID() {
+        return crypto.randomUUID();
+    }
+    
+    function getDate(){
+        const date = new Date().toISOString().split('T')[0];
+        return date;
+    }
+
+    function showPosition(position) {
+        lat = position.coords.latitude;
+        long = position.coords.longitude
+        accuracy = position.coords.accuracy
     }
 });

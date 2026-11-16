@@ -28,6 +28,7 @@ class sightingsAPI
                 $this->getAllSightings();
                 break;
             case 'POST':
+                $this->addSighting();
                 break;
             default:
                 $this->statuscode = 405;
@@ -64,7 +65,6 @@ class sightingsAPI
     }
 
     // add a sighting to the db
-    // TODO: further data validation checks for security
     public function addSighting()
     {
         if (
@@ -76,7 +76,6 @@ class sightingsAPI
             $_POST['gps_accuracy'],
             $_POST['date'],
             $_POST['status'],
-            $_POST['mortality_type'],
             $_POST['notes']
         )
         ) {
@@ -92,15 +91,25 @@ class sightingsAPI
         $gps_accuracy = filter_var($_POST['gps_accuracy'], FILTER_VALIDATE_FLOAT);
         $date = htmlspecialchars(strip_tags(trim($_POST['date'])));
         $status = htmlspecialchars(strip_tags(trim($_POST['status'])));
-        $mortality_type = htmlspecialchars(strip_tags(trim($_POST['mortality_type'])));
         $notes = htmlspecialchars(strip_tags(trim($_POST['notes'])));
+        $mortality_type = trim(strip_tags($_POST['mortality_type'] ?? ''));
 
-        if ($longitude === false || $longitude < -180 || $longitude > 180) {
+        if ($mortality_type === '') {
+            $mortality_type = null;
+        }
+
+        // perform input validation
+        if (!$this->validateGeolocation($longitude, $latitude, $gps_accuracy)) {
             $this->statuscode = 400;
             return;
         }
-    
-        if ($latitude === false || $latitude < -90 || $latitude > 90) {
+
+        if (!$this->validateMortalityTypes($mortality_type)) {
+            $this->statuscode = 400;
+            return;
+        }
+
+        if (!$this->validateAlphanumeric($species)) {
             $this->statuscode = 400;
             return;
         }
@@ -115,7 +124,7 @@ class sightingsAPI
         }
 
         $stmt->bind_param(
-            "ssddsssss",
+            "ssdddssss",
             $client_uuid,
             $species,
             $longitude,
@@ -129,7 +138,7 @@ class sightingsAPI
 
         if ($this->executeStatement($stmt)) {
             $this->statuscode = 201;
-        } 
+        }
         $stmt->close();
     }
 
@@ -142,7 +151,6 @@ class sightingsAPI
             return false;
         }
         return $stmt;
-
     }
 
     // execute statement
@@ -155,10 +163,50 @@ class sightingsAPI
             return false;
         }
     }
+
+    // validate the passed field is alphanumeric
+    private function validateAlphanumeric($field)
+    {
+        if (!preg_match('/^[a-zA-Z0-9 ]+$/', $field)) {
+            return false;
+        }
+        return true;
+    }
+
+    // check posted mort type and check it against the allowed types
+    private function validateMortalityTypes($mortality_type)
+    {
+        $allowedTypes = [
+            'Fence Death: Electrocution',
+            'Fence Death: Caught on non-electrified fence',
+            'Road Death',
+            'Other'];
+        
+        if ($mortality_type == null || in_array($mortality_type, $allowedTypes)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // validate geolocation fields
+    private function validateGeolocation($longitude, $latitude, $gps_accuracy)
+    {
+        if ($longitude === false || $longitude < -180 || $longitude > 180) {
+            return false;
+        }
+
+        if ($latitude === false || $latitude < -90 || $latitude > 90) {
+            return false;
+        }
+
+        if ($gps_accuracy === false || $gps_accuracy < 0) {
+            return false;
+        }
+        return true;
+    }
 }
 
 $api = new sightingsAPI();
 $api->handle_request($_SERVER['REQUEST_METHOD']);
-/* TODO: 
- * Add error handling to database conn and queries */
 ?>
