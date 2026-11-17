@@ -20,12 +20,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const captureBtn = document.getElementById('capture_btn');
     const camPermissionsBtn = document.getElementById("cam_permissions_btn");
 
-    console.log(video);
-    console.log(canvas);
-    console.log(photo);
-    console.log(captureBtn);
-    console.log(camPermissionsBtn);
-
 
     // gps and date variables for use in formdata
     let lat;
@@ -65,44 +59,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     })
 
     captureBtn.addEventListener('click', (e) => {
-        alert("JavaScript capture handler works");
-        // e.preventDefault();
-        // console.log("Capture button clicked");
-        // takePicture();
+        e.preventDefault();
+        console.log("Capture button clicked");
+        takePicture();
     });
 
     camPermissionsBtn.addEventListener("click", async () => {
-        alert("JavaScript capture handler works");
-    //     console.log("Camera button clicked");
+        console.log("Camera button clicked");
+    
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: false
+            });
+    
+            console.log("Camera permission granted");
+    
+            video.srcObject = stream;
+            await video.play();
+    
+        } catch (e) {
+            console.error("Camera error:", e);
+            alert("Camera error: " + e.message);
+        }
+    });
 
-    //     try {
-    //         const stream = await navigator.mediaDevices.getUserMedia({
-    //             video: true,
-    //             audio: false
-    //         });
+    video.addEventListener("canplay", () => {
+        if (!streaming) {
+            height = video.videoHeight / (video.videoWidth / width);
 
-    //         console.log("Camera permission granted");
+            video.setAttribute("width", width);
+            video.setAttribute("height", height);
+            canvas.setAttribute("width", width);
+            canvas.setAttribute("height", height);
 
-    //         video.srcObject = stream;
-    //         await video.play();
-
-    //     } catch (e) {
-    //         console.error("Camera error:", e);
-    //         alert("Camera error: " + e.message);
-    //     }
-    // });
-
-    // video.addEventListener("canplay", () => {
-    //     if (!streaming) {
-    //         height = video.videoHeight / (video.videoWidth / width);
-
-    //         video.setAttribute("width", width);
-    //         video.setAttribute("height", height);
-    //         canvas.setAttribute("width", width);
-    //         canvas.setAttribute("height", height);
-
-    //         streaming = true;
-    //     }
+            streaming = true;
+        }
     });
 
     // query the API to fetch sightings from the db
@@ -200,31 +192,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 
-    // function clearPhoto() {
-    //     const context = canvas.getContext("2d");
+    function clearPhoto() {
+        const context = canvas.getContext("2d");
 
-    //     context.fillStyle = "#aaaaaa";
-    //     context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "#aaaaaa";
+        context.fillRect(0, 0, canvas.width, canvas.height);
 
-    //     const data = canvas.toDataURL("image/png");
-    //     photo.setAttribute("src", data);
-    // }
+        const data = canvas.toDataURL("image/png");
+        photo.setAttribute("src", data);
+    }
 
-    // function takePicture() {
-    //     if (width && height && streaming) {
-    //         const context = canvas.getContext("2d");
+    function takePicture() {
+        if (width && height && streaming) {
+            const context = canvas.getContext("2d");
 
-    //         canvas.width = width;
-    //         canvas.height = height;
+            canvas.width = width;
+            canvas.height = height;
 
-    //         context.drawImage(video, 0, 0, width, height);
+            context.drawImage(video, 0, 0, width, height);
 
-    //         const data = canvas.toDataURL("image/png");
-    //         photo.setAttribute("src", data);
-    //     } else {
-    //         clearPhoto();
-    //     }
-    // }
-
+            const data = canvas.toDataURL("image/png");
+            photo.setAttribute("src", data);
+        } else {
+            clearPhoto();
+        }
+    }
+    
     await fetchSightings();
 });
