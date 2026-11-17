@@ -14,12 +14,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     let height = 0;
     let streaming = false;
 
+    const captureBtn = document.getElementById('capture_btn');
+    const camPermissionsBtn = document.getElementById("cam_permissions_btn");
     const video = document.getElementById("video");
     const canvas = document.getElementById("canvas");
     const photo = document.getElementById("photo");
-    const captureBtn = document.getElementById('capture_btn');
-    const camPermissionsBtn = document.getElementById("cam_permissions_btn");
-
 
     // gps and date variables for use in formdata
     let lat;
@@ -60,24 +59,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     captureBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        console.log("Capture button clicked");
         takePicture();
     });
 
     camPermissionsBtn.addEventListener("click", async () => {
-        console.log("Camera button clicked");
-    
+
+
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true,
                 audio: false
             });
-    
+
             console.log("Camera permission granted");
-    
+
             video.srcObject = stream;
             await video.play();
-    
+
         } catch (e) {
             console.error("Camera error:", e);
             alert("Camera error: " + e.message);
@@ -217,6 +215,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             clearPhoto();
         }
     }
-    
+
     await fetchSightings();
 });
