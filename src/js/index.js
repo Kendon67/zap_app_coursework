@@ -1,13 +1,7 @@
-
 document.addEventListener('DOMContentLoaded', async () => {
     const sightingsContainer = document.querySelector('#sightings_container');
-    let sightingsArray = [];
 
-    // gps and date variables for use in formdata
-    let lat;
-    let long;
-    let accuracy;
-
+    // form elements
     const uploadFormContainer = document.getElementById("upload_form_container");
     const statusRadios = document.querySelectorAll('input[name="status"]');
     const mortalitySelection = document.getElementById('mortality_type');
@@ -15,13 +9,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     const uploadBtn = document.getElementById('upload_btn');
     const closeFormBtn = document.getElementById('close_form_btn');
 
+    // camera elements
+    const width = 320;
+    let height = 0;
+    let streaming = false;
+
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const photo = document.getElementById("photo");
+    const captureBtn = document.getElementById('capture_btn');
+    const camPermissionsBtn = document.getElementById("cam_permissions_btn");
+
+    console.log(video);
+    console.log(canvas);
+    console.log(photo);
+    console.log(captureBtn);
+    console.log(camPermissionsBtn);
+
+
+    // gps and date variables for use in formdata
+    let lat;
+    let long;
+    let accuracy;
+
+    let sightingsArray = [];
+
     // hide mortality type box if status set to alive
     statusRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
-            if (e.target.value == "Alive"){
+            if (e.target.value == "Alive") {
                 mortalitySelection.style.display = 'none';
                 mortalitySelection.value = '';
-            } else if (e.target.value == "Dead"){
+            } else if (e.target.value == "Dead") {
                 mortalitySelection.style.display = 'flex';
                 mortalitySelection.value = '';
             }
@@ -44,6 +63,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         uploadForm.reset();
         uploadFormContainer.style.display = 'none';
     })
+
+    captureBtn.addEventListener('click', (e) => {
+        alert("JavaScript capture handler works");
+        // e.preventDefault();
+        // console.log("Capture button clicked");
+        // takePicture();
+    });
+
+    camPermissionsBtn.addEventListener("click", async () => {
+        alert("JavaScript capture handler works");
+    //     console.log("Camera button clicked");
+
+    //     try {
+    //         const stream = await navigator.mediaDevices.getUserMedia({
+    //             video: true,
+    //             audio: false
+    //         });
+
+    //         console.log("Camera permission granted");
+
+    //         video.srcObject = stream;
+    //         await video.play();
+
+    //     } catch (e) {
+    //         console.error("Camera error:", e);
+    //         alert("Camera error: " + e.message);
+    //     }
+    // });
+
+    // video.addEventListener("canplay", () => {
+    //     if (!streaming) {
+    //         height = video.videoHeight / (video.videoWidth / width);
+
+    //         video.setAttribute("width", width);
+    //         video.setAttribute("height", height);
+    //         canvas.setAttribute("width", width);
+    //         canvas.setAttribute("height", height);
+
+    //         streaming = true;
+    //     }
+    });
 
     // query the API to fetch sightings from the db
     async function fetchSightings() {
@@ -82,12 +142,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    await fetchSightings();
-
     // upload a new sighting to the db
     async function uploadSighting() {
         try {
-            const sightingData = new FormData(uploadForm); 
+            const sightingData = new FormData(uploadForm);
             await getLocation();
 
             sightingData.append("latitude", lat);
@@ -129,8 +187,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     function getUUID() {
         return crypto.randomUUID();
     }
-    
-    function getDate(){
+
+    function getDate() {
         const date = new Date().toISOString().split('T')[0];
         return date;
     }
@@ -140,4 +198,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         long = position.coords.longitude
         accuracy = position.coords.accuracy
     }
+
+
+    // function clearPhoto() {
+    //     const context = canvas.getContext("2d");
+
+    //     context.fillStyle = "#aaaaaa";
+    //     context.fillRect(0, 0, canvas.width, canvas.height);
+
+    //     const data = canvas.toDataURL("image/png");
+    //     photo.setAttribute("src", data);
+    // }
+
+    // function takePicture() {
+    //     if (width && height && streaming) {
+    //         const context = canvas.getContext("2d");
+
+    //         canvas.width = width;
+    //         canvas.height = height;
+
+    //         context.drawImage(video, 0, 0, width, height);
+
+    //         const data = canvas.toDataURL("image/png");
+    //         photo.setAttribute("src", data);
+    //     } else {
+    //         clearPhoto();
+    //     }
+    // }
+
+    await fetchSightings();
 });
