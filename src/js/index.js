@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const width = 320;
     let height = 0;
     let streaming = false;
+    let selectedPhoto = null;
 
     const captureBtn = document.getElementById('capture_btn');
     const camPermissionsBtn = document.getElementById("cam_permissions_btn");
@@ -144,6 +145,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             sightingData.append("client_uuid", getUUID());
             sightingData.append("date", getDate());
 
+            if (selectedPhoto){
+                sightingData.append("image", selectedPhoto);
+            }
+
             const response = await fetch('../api/api.php', {
                 method: "POST",
                 body: sightingData
@@ -151,7 +156,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (response.ok) {
                 alert('Sighting Successfully Uploaded!');
+                uploadForm.reset();
                 uploadFormContainer.style.display = "none";
+                selectedPhoto = null;
+                photo.removeAttribute('src');
+
                 await fetchSightings();
             } else {
                 alert("Something went wrong") // update this
