@@ -25,7 +25,6 @@
 
 
     <main>
-        
         <h1>Pangolin Sightings</h1>
         <div id="sightings_container" class="listview">
             <!-- Placeholder cards -->
@@ -46,54 +45,73 @@
                 <p>Date: 2023-10-02</p>
             </div>
         </div>
-    <button id="upload_btn">Upload Form</button>
+        <button id="upload_btn">Upload Form</button>
 
-    <div class="camera">
-            <button id="cam_permissions_btn">Allow camera</button>
-            <video id="video">Video Stream not available.</video>
-            <button id="capture_btn">Capture Photo</button>
-        </div>
+        <div id="upload_form_container" class="upload_form">
 
-        <canvas id="canvas"></canvas>
-        <div class="camera_output">
-            <img id="photo" src="" alt="The screen capture will appear in this box"/>
+            <form class="upload_form_content" id="upload_form">
+        
+                <h2>Record a Pangolin Sighting</h2>
+        
+                <label for="species">Species:</label>
+                <input type="text" id="species" name="species" required>
+        
+                <label>Status:</label>
+        
+                <label>
+                    <input type="radio" name="status" value="Alive" required>
+                    Alive
+                </label>
+        
+                <label>
+                    <input type="radio" name="status" value="Dead">
+                    Dead
+                </label>
+        
+                <label for="mortality_type">Mortality type:</label>
+                <select id="mortality_type" name="mortality_type">
+                    <option value="" disabled selected>Select Mortality Type:</option>
+                    <option value="Fence Death: Electrocution">Fence Death: Electrocution</option>
+                    <option value="Fence Death: Caught on non-electrified fence">Fence Death: Caught on non-electrified fence</option>
+                    <option value="Road Death">Road Death</option>
+                    <option value="Other">Other</option>
+                </select>
+        
+                <label for="notes">Additional notes:</label>
+                <textarea id="notes" name="notes" rows="4"></textarea>
+        
+                <div class="camera">
+        
+                    <h3>Photograph</h3>
+        
+                    <button type="button" id="cam_permissions_btn">Open Camera</button>
+                    <video id="video" autoplay playsinline>Video Stream not available.</video>
+        
+                    <button type="button" id="capture_btn">Capture Photo</button>
+        
+                    <label for="gallery_input">Or select from gallery:</label>
+                    <input type="file" id="gallery_input" accept="image/*">
+        
+                    <canvas id="canvas"></canvas>
+                    <div class="camera_output">
+                        <img id="photo" src="" alt="Photograph preview">
+                    </div>
+                </div>
+        
+                <button type="submit" id="submit_btn">
+                    Submit Sighting
+                </button>
+        
+                <button type="button" id="close_form_btn">
+                    Close Form
+                </button>
+        
+            </form>
+        
         </div>
     </main>
 
-
-    <div id="upload_form_container" class="upload_form">
-    <form class="upload_form_content" id="upload_form">
-
-        <h2>Record a Pangolin Sighting</h2>
-
-        <label for="species">Species:</label>
-        <input type="text" id="species" name="species" required>
-
-        <label for="status">Status:</label>    
-        <label>
-            <input type="radio" class="status_radio" name="status" value="Alive"> Alive
-          </label>
-          <label>
-            <input type="radio" class="status_radio" name="status" value="Dead"> Dead
-          </label>
-
-        <label for="mortality_type">Mortality type:</label>
-        <select id="mortality_type" name="mortality_type">
-            <option value="" disabled selected>Select Mortality Type:</option>
-            <option value="Fence Death: Electrocution">Fence Death: Electrocution</option>
-            <option value="Fence Death: Caught on non-electrified fence">Fence Death: Caught on non-electrified fence</option>
-            <option value="Road Death">Road Death</option>
-            <option value="Other">Other</option>
-        </select>
-
-        <label for="notes">Additional notes:</label>
-        <textarea id="notes" name="notes" rows="4"></textarea>
-
-        <button type="submit" id="submit_btn">Submit Sighting</button>
-        <button id="close_form_btn">Close Form</button>
-
-    </form>
-</div>
+    </div>
 </body>
 
 </html>
