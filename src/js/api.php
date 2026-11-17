@@ -180,8 +180,9 @@ class sightingsAPI
             'Fence Death: Electrocution',
             'Fence Death: Caught on non-electrified fence',
             'Road Death',
-            'Other'];
-        
+            'Other'
+        ];
+
         if ($mortality_type == null || in_array($mortality_type, $allowedTypes)) {
             return true;
         } else {
@@ -204,6 +205,55 @@ class sightingsAPI
             return false;
         }
         return true;
+    }
+
+    // validate image uploading
+    private function validateImageUpload()
+    {
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+
+        $image = $_FILES['image'];
+
+        if ($image['error'] !== UPLOAD_ERR_OK) {
+            $this->statuscode = 400;
+            return false;
+        }
+
+        $allowedTypes = ["image/jpeg" => "jpg", "image/png" => "png", "image/webp" => "webp"];
+
+        // Check actual file MIME type
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+
+        if ($finfo === false) {
+            $this->statuscode = 500;
+            return false;
+        }
+
+        $imageType = finfo_file($finfo, $image['tmp_name']);
+
+        if (!isset($allowedTypes[$imageType])) {
+            $this->statuscode = 400;
+            return false;
+        }
+
+        $extension = $allowedTypes[$imageType];
+        $filename = bin2hex(random_bytes(16)) . "." . $extension;
+        $uploadDirectory = __DIR__ . '/../public/images/';
+
+        if (!is_dir($uploadDirectory) && !mkdir($uploadDirectory, 0755, true)) {
+            $this->statuscode = 500;
+            return false;
+        }
+
+        $uploadPath = $uploadDirectory . $filename;
+
+        if (!move_uploaded_file($image['tmp_name'], $uploadPath)) {
+            $this->statuscode = 500;
+            return false;
+        }
+        return "images/" . $filename;
     }
 }
 
