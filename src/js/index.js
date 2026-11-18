@@ -227,3 +227,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await fetchSightings();
 });
+//TODO: Convert the taken photo into a blob so the image can be stored

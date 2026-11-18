@@ -79,7 +79,6 @@ class sightingsAPI
             $_POST['notes']
         )
         ) {
-
             $this->statuscode = 400;
             return;
         }
@@ -113,6 +112,12 @@ class sightingsAPI
             $this->statuscode = 400;
             return;
         }
+    
+        // get image path, if there is an error with the validation it fails
+        $imagePath = $this->validateImageUpload();
+        if ($imagePath === false){
+            return;
+        }
 
         $sql = "INSERT INTO `sightings` (client_uuid, species, longitude, latitude, gps_accuracy,
                  date, status, mortality_type, notes) 
@@ -136,10 +141,34 @@ class sightingsAPI
             $notes
         );
 
+        // upon successful execution check if image was uploaded and insert
         if ($this->executeStatement($stmt)) {
+            $sightingId = $this->database->insert_id;
+            if ($imagePath !== null) {
+                if(!$this->addSightingImage($sightingId, $imagePath)) {
+                    $stmt->close();
+                    return;
+                }
+            }
+
             $this->statuscode = 201;
         }
         $stmt->close();
+    }
+
+    public function addSightingImage($sightingId, $imagePath){
+        $sql = "INSERT INTO `sightings_images` (sighting_id, image_path) VALUES (?, ?)";
+        $stmt = $this->prepareStmt($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param("is", $sightingId, $imagePath);
+        if ($this->executeStatement($stmt)) {
+            $stmt->close();
+            return true;
+        }
     }
 
     // prepare statement for execution
@@ -222,8 +251,6 @@ class sightingsAPI
         }
 
         $allowedTypes = ["image/jpeg" => "jpg", "image/png" => "png", "image/webp" => "webp"];
-
-        // Check actual file MIME type
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
 
         if ($finfo === false) {
