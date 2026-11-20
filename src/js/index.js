@@ -55,6 +55,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeFormBtn.addEventListener("click", (e) => {
         e.preventDefault();
         uploadForm.reset();
+        selectedPhoto = null;
+        photo.removeAttribute();
         uploadFormContainer.style.display = 'none';
     })
 
@@ -64,8 +66,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     camPermissionsBtn.addEventListener("click", async () => {
-
-
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true,
@@ -207,19 +207,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const data = canvas.toDataURL("image/png");
         photo.setAttribute("src", data);
+        selectedPhoto = null;
     }
 
     function takePicture() {
         if (width && height && streaming) {
             const context = canvas.getContext("2d");
-
             canvas.width = width;
             canvas.height = height;
 
             context.drawImage(video, 0, 0, width, height);
-
-            const data = canvas.toDataURL("image/png");
+            const data = canvas.toDataURL("image/jpeg");
             photo.setAttribute("src", data);
+
+            canvas.toBlob((blob) => {
+                selectedPhoto = blob;
+            }, "image/jpeg", 0.85)
         } else {
             clearPhoto();
         }

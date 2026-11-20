@@ -156,6 +156,7 @@ class sightingsAPI
         $stmt->close();
     }
 
+    // add sighting photo to the sightings_images table
     public function addSightingImage($sightingId, $imagePath){
         $sql = "INSERT INTO `sightings_images` (sighting_id, image_path) VALUES (?, ?)";
         $stmt = $this->prepareStmt($sql);
