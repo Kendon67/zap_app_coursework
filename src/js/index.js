@@ -1,7 +1,9 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     const sightingsPage = document.getElementById("sightings_page");
+    const sightingsPageBtn = document.getElementById("sightings_page_btn");
     const mapPage = document.getElementById("map_page");
+    const mapPageBtn = document.getElementById("map_page_btn");
 
     const sightingsContainer = document.querySelector('#sightings_container');
     let sightingsArray = [];
@@ -143,6 +145,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         long = position.coords.longitude
         accuracy = position.coords.accuracy
     }
+
+    mapPageBtn.addEventListener('click', (e) =>{
+        e.preventDefault();
+        hideAllPages();
+        mapPage.style.display = 'flex';
+    })
+
+    sightingsPageBtn.addEventListener('click', (e) =>{
+        e.preventDefault();
+        hideAllPages();
+        sightingsPage.style.display = 'block';
+    })
 
     function hideAllPages(){
         sightingsPage.style.display = 'none';

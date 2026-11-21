@@ -205,3 +205,8 @@ button {
 #mortality_type {
     display: none;
 }
+
+/* map page styling */
+#map_page{
+    display: none;
+}
