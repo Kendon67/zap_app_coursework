@@ -1,5 +1,8 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const sightingsPage = document.getElementById("sightings_page");
+    const mapPage = document.getElementById("map_page");
+
     const sightingsContainer = document.querySelector('#sightings_container');
     let sightingsArray = [];
 
@@ -139,5 +142,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         lat = position.coords.latitude;
         long = position.coords.longitude
         accuracy = position.coords.accuracy
+    }
+
+    function hideAllPages(){
+        sightingsPage.style.display = 'none';
+        mapPage.style.display = 'none';
     }
 });
