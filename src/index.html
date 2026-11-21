@@ -16,70 +16,77 @@
 
     <nav class="navbar">
         <ul>
-            <a href="index.html">Home</a>
-            <a href="about.html">Map</a>
+            <button id="sightings_page_btn">Home</button>
+            <button id="map_page_btn">Map</button>
             <a>Upload Sighting</a>
             <a href="contact.html">Settings</a>
         </ul>
     </nav>
 
     <main>
-        <h1>Pangolin Sightings</h1>
-        <div id="sightings_container" class="listview">
-            <!-- Placeholder cards -->
+        <section id="sightings_page">
+            <h1>Pangolin Sightings</h1>
+            <div id="sightings_container" class="listview">
+                <!-- Placeholder cards -->
 
-            <div class="card">
-                <h2>Rare Pangolin</h2>
-                <p>Location: Forest B</p>
-                <p>Date: 2023-10-02</p>
+                <div class="card">
+                    <h2>Rare Pangolin</h2>
+                    <p>Location: Forest B</p>
+                    <p>Date: 2023-10-02</p>
+                </div>
+                <div class="card">
+                    <h2>Rare Pangolin</h2>
+                    <p>Location: Forest B</p>
+                    <p>Date: 2023-10-02</p>
+                </div>
+                <div class="card">
+                    <h2>Rare Pangolin</h2>
+                    <p>Location: Forest B</p>
+                    <p>Date: 2023-10-02</p>
+                </div>
             </div>
-            <div class="card">
-                <h2>Rare Pangolin</h2>
-                <p>Location: Forest B</p>
-                <p>Date: 2023-10-02</p>
-            </div>
-            <div class="card">
-                <h2>Rare Pangolin</h2>
-                <p>Location: Forest B</p>
-                <p>Date: 2023-10-02</p>
-            </div>
-        </div>
-    <button id="upload_btn">Upload Form</button>
+            <button id="upload_btn">Upload Form</button>
+        </section>
     </main>
 
     <div id="upload_form_container" class="upload_form">
-    <form class="upload_form_content" id="upload_form">
+        <form class="upload_form_content" id="upload_form">
 
-        <h2>Record a Pangolin Sighting</h2>
+            <h2>Record a Pangolin Sighting</h2>
 
-        <label for="species">Species:</label>
-        <input type="text" id="species" name="species" required>
+            <label for="species">Species:</label>
+            <input type="text" id="species" name="species" required>
 
-        <label for="status">Status:</label>    
-        <label>
-            <input type="radio" class="status_radio" name="status" value="Alive"> Alive
-          </label>
-          <label>
-            <input type="radio" class="status_radio" name="status" value="Dead"> Dead
-          </label>
+            <label for="status">Status:</label>
+            <label>
+                <input type="radio" class="status_radio" name="status" value="Alive"> Alive
+            </label>
+            <label>
+                <input type="radio" class="status_radio" name="status" value="Dead"> Dead
+            </label>
 
-        <label for="mortality_type">Mortality type:</label>
-        <select id="mortality_type" name="mortality_type">
-            <option value="" disabled selected>Select Mortality Type:</option>
-            <option value="Fence Death: Electrocution">Fence Death: Electrocution</option>
-            <option value="Fence Death: Caught on non-electrified fence">Fence Death: Caught on non-electrified fence</option>
-            <option value="Road Death">Road Death</option>
-            <option value="Other">Other</option>
-        </select>
+            <label for="mortality_type">Mortality type:</label>
+            <select id="mortality_type" name="mortality_type">
+                <option value="" disabled selected>Select Mortality Type:</option>
+                <option value="Fence Death: Electrocution">Fence Death: Electrocution</option>
+                <option value="Fence Death: Caught on non-electrified fence">Fence Death: Caught on non-electrified
+                    fence</option>
+                <option value="Road Death">Road Death</option>
+                <option value="Other">Other</option>
+            </select>
 
-        <label for="notes">Additional notes:</label>
-        <textarea id="notes" name="notes" rows="4"></textarea>
+            <label for="notes">Additional notes:</label>
+            <textarea id="notes" name="notes" rows="4"></textarea>
 
-        <button type="submit" id="submit_btn">Submit Sighting</button>
-        <button id="close_form_btn">Close Form</button>
+            <button type="submit" id="submit_btn">Submit Sighting</button>
+            <button id="close_form_btn">Close Form</button>
 
-    </form>
-</div>
+        </form>
+    </div>
+
+    <div id="map_page">
+        <p>Map Page!</p>
+    </div>
 </body>
 
 </html>

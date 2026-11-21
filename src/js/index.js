@@ -1,5 +1,10 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const sightingsPage = document.getElementById("sightings_page");
+    const sightingsPageBtn = document.getElementById("sightings_page_btn");
+    const mapPage = document.getElementById("map_page");
+    const mapPageBtn = document.getElementById("map_page_btn");
+
     const sightingsContainer = document.querySelector('#sightings_container');
     let sightingsArray = [];
 
@@ -14,6 +19,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const uploadForm = document.getElementById('upload_form');
     const uploadBtn = document.getElementById('upload_btn');
     const closeFormBtn = document.getElementById('close_form_btn');
+
+    // navigation button listeners
+    mapPageBtn.addEventListener('click', (e) =>{
+        e.preventDefault();
+        hideAllPages();
+        mapPage.style.display = 'flex';
+    })
+
+    sightingsPageBtn.addEventListener('click', (e) =>{
+        e.preventDefault();
+        hideAllPages();
+        sightingsPage.style.display = 'block';
+    })
 
     // hide mortality type box if status set to alive
     statusRadios.forEach(radio => {
@@ -69,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         sightingsArray.forEach(sighting => {
             const sightingCard = document.createElement('div');
-            sightingCard.classList.add('sighting');
+            sightingCard.classList.add('card');
             sightingCard.innerHTML = `
                 <h3>${sighting.species}</h3>
                 <p>Status: ${sighting.status}</p>
@@ -139,5 +157,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         lat = position.coords.latitude;
         long = position.coords.longitude
         accuracy = position.coords.accuracy
+    }
+
+
+    function hideAllPages(){
+        sightingsPage.style.display = 'none';
+        mapPage.style.display = 'none';
     }
 });

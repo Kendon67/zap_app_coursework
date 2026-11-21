@@ -30,6 +30,10 @@ body {
                  "Segoe UI", sans-serif;
 }
 
+#sightings_page{
+    padding-bottom: 100px;
+}
+
 /* Navbar styles */
 .navbar {
     background-color: #333;
@@ -82,25 +86,6 @@ body {
     width: 100%;
     box-sizing: border-box;
 }
-
-/*
-.card {
-    display: grid;
-    grid-template-rows: auto 190px 1fr;
-    gap: 12px;
-
-    padding: 14px;
-    background-color: var(--white);
-
-    border: 1px solid var(--border);
-    border-radius: 18px;
-
-    box-shadow: var(--shadow);
-
-    overflow: hidden;
-    transition: transform 0.2s ease,
-                box-shadow 0.2s ease;
-} */
 
 .card:hover {
     transform: translateY(-3px);
@@ -205,3 +190,7 @@ button {
 #mortality_type {
     display: none;
 }
+
+/*TODO: 
+* Fix bug where highlighted card will overlap the nav bar
+*/
