@@ -20,6 +20,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const uploadBtn = document.getElementById('upload_btn');
     const closeFormBtn = document.getElementById('close_form_btn');
 
+    // navigation button listeners
+    mapPageBtn.addEventListener('click', (e) =>{
+        e.preventDefault();
+        hideAllPages();
+        mapPage.style.display = 'flex';
+    })
+
+    sightingsPageBtn.addEventListener('click', (e) =>{
+        e.preventDefault();
+        hideAllPages();
+        sightingsPage.style.display = 'block';
+    })
+
     // hide mortality type box if status set to alive
     statusRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
@@ -74,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         sightingsArray.forEach(sighting => {
             const sightingCard = document.createElement('div');
-            sightingCard.classList.add('sighting');
+            sightingCard.classList.add('card');
             sightingCard.innerHTML = `
                 <h3>${sighting.species}</h3>
                 <p>Status: ${sighting.status}</p>
@@ -146,17 +159,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         accuracy = position.coords.accuracy
     }
 
-    mapPageBtn.addEventListener('click', (e) =>{
-        e.preventDefault();
-        hideAllPages();
-        mapPage.style.display = 'flex';
-    })
-
-    sightingsPageBtn.addEventListener('click', (e) =>{
-        e.preventDefault();
-        hideAllPages();
-        sightingsPage.style.display = 'block';
-    })
 
     function hideAllPages(){
         sightingsPage.style.display = 'none';
