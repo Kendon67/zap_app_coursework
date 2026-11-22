@@ -53,7 +53,10 @@
 
             <h2>Record a Pangolin Sighting</h2>
 
-            <input id="image_input" name="image_input" type="file" accept="image/*"/>
+            <input id="image_input" name="image_input" type="file" accept="image/*" />
+            <video id="video"></video>
+            <button id="capture_btn">Capture</button>
+            <canvas id="canvas"></canvas>
 
             <label for="species">Species:</label>
             <input type="text" id="species" name="species" required>
@@ -85,9 +88,6 @@
         </form>
     </div>
 
-    <video id="video"></video>
-    <button id="capture_btn">Capture</button>
-    <canvas id="canvas"></canvas>
 
     <div id="map_page">
         <p>Map Page!</p>
