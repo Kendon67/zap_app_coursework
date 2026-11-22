@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const openCameraBtn = document.getElementById('open_camera_btn');
     const closeCameraBtn = document.getElementById('close_camera_btn');
+    const photoPicker = document.getElementById('photo_picker_container');
+    const addImageBtn = document.getElementById('add_image_btn');
 
     // navigation button listeners
     mapPageBtn.addEventListener('click', (e) => {
@@ -44,6 +46,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         hideAllPages();
         sightingsPage.style.display = 'block';
+    })
+
+    addImageBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        photoPicker.style.display = 'flex';
     })
 
     openCameraBtn.addEventListener('click', (e) => {
