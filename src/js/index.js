@@ -20,6 +20,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const uploadBtn = document.getElementById('upload_btn');
     const closeFormBtn = document.getElementById('close_form_btn');
 
+    // camera consts
+    const player = document.getElementById('player');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    const captureBtn = document.getElementById('capture_btn');
+
     // navigation button listeners
     mapPageBtn.addEventListener('click', (e) =>{
         e.preventDefault();
@@ -157,6 +163,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         lat = position.coords.latitude;
         long = position.coords.longitude
         accuracy = position.coords.accuracy
+    }
+
+    async function startCamera(){
+        try {
+            const videoStream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+            player.srcObject = videoStream;
+            await player.play();
+        } catch (e) {
+            console.error(e);
+        }
     }
 
 
