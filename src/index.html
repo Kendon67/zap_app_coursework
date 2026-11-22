@@ -53,11 +53,6 @@
 
             <h2>Record a Pangolin Sighting</h2>
 
-            <input id="image_input" name="image_input" type="file" accept="image/*" />
-            <video id="video"></video>
-            <button id="capture_btn">Capture</button>
-            <canvas id="canvas"></canvas>
-
             <label for="species">Species:</label>
             <input type="text" id="species" name="species" required>
 
@@ -86,6 +81,27 @@
             <button type="button" id="close_form_btn">Close Form</button>
 
         </form>
+    </div>
+
+    <div id="camera_modal" class="camera_modal">
+
+        <button type="button" id="close_camera_btn">Close</button>
+        <video id="video" autoplay playsinline></video>
+        <button type="button" id="capture_btn">Capture</button>
+        <canvas id="canvas" hidden></canvas>
+
+        <div id="camera_preview_container">
+            <img id="camera_preview" alt="Captured photo">
+            <button type="button" id="retake_btn">Retake</button>
+            <button type="button" id="confirm_photo_btn">Use Photo</button>
+        </div>
+
+    </div>
+    <div id="image_modal">
+        <input id="image_input" name="image_input" type="file" accept="image/*" />
+        <video id="video"></video>
+        <button id="capture_btn">Capture</button>
+        <canvas id="canvas"></canvas>
     </div>
 
 
