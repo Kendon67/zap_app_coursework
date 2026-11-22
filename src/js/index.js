@@ -20,32 +20,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     const uploadBtn = document.getElementById('upload_btn');
     const closeFormBtn = document.getElementById('close_form_btn');
 
-    // camera consts
-    const player = document.getElementById('player');
+    // camera varaiables
+    const width = 320;
+    let height = 0;
+    let streaming = false;
+
+    const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
     const captureBtn = document.getElementById('capture_btn');
 
     // navigation button listeners
-    mapPageBtn.addEventListener('click', (e) =>{
+    mapPageBtn.addEventListener('click', (e) => {
         e.preventDefault();
         hideAllPages();
         mapPage.style.display = 'flex';
     })
 
-    sightingsPageBtn.addEventListener('click', (e) =>{
+    sightingsPageBtn.addEventListener('click', (e) => {
         e.preventDefault();
         hideAllPages();
         sightingsPage.style.display = 'block';
     })
 
+    captureBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        capturePhoto();
+    });
+
     // hide mortality type box if status set to alive
     statusRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
-            if (e.target.value == "Alive"){
+            if (e.target.value == "Alive") {
                 mortalitySelection.style.display = 'none';
                 mortalitySelection.value = '';
-            } else if (e.target.value == "Dead"){
+            } else if (e.target.value == "Dead") {
                 mortalitySelection.style.display = 'flex';
                 mortalitySelection.value = '';
             }
@@ -55,6 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     uploadBtn.addEventListener("click", (e) => {
         e.preventDefault();
         uploadFormContainer.style.display = "flex";
+        startCamera();
     })
 
     uploadForm.addEventListener("submit", (e) => {
@@ -111,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // upload a new sighting to the db
     async function uploadSighting() {
         try {
-            const sightingData = new FormData(uploadForm); 
+            const sightingData = new FormData(uploadForm);
             await getLocation();
 
             sightingData.append("latitude", lat);
@@ -153,8 +163,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     function getUUID() {
         return crypto.randomUUID();
     }
-    
-    function getDate(){
+
+    function getDate() {
         const date = new Date().toISOString().split('T')[0];
         return date;
     }
@@ -165,18 +175,53 @@ document.addEventListener('DOMContentLoaded', async () => {
         accuracy = position.coords.accuracy
     }
 
-    async function startCamera(){
+    // ask user for camera permission and start stream feed
+    async function startCamera() {
         try {
-            const videoStream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
-            player.srcObject = videoStream;
-            await player.play();
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true,
+                audio: false
+            });
+    
+            video.srcObject = stream;
+            await video.play();
+    
         } catch (e) {
             console.error(e);
         }
     }
 
+    video.addEventListener('canplay', () => {
+        if (!streaming){
+            height = video.videoHeight / (video.videoWidth / width);
 
-    function hideAllPages(){
+            video.setAttribute("width", width);
+            video.setAttribute("height", height);
+            canvas.setAttribute("width", width);
+            canvas.setAttribute("height", height);
+            streaming = true;
+        }
+    })
+
+    // check for all open camera streams then stop them
+    function stopCamera() {
+        const videoStream = video.srcObject;
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+        }
+    }
+
+    function capturePhoto() {
+        if (width && height && streaming) {
+            canvas.width = width;
+            canvas.height = height;
+    
+            context.drawImage(video, 0, 0, width, height);
+        }
+    }
+
+    function hideAllPages() {
         sightingsPage.style.display = 'none';
         mapPage.style.display = 'none';
     }
