@@ -1,3 +1,4 @@
+
 <!doctype html>
 
 <html lang="en">
@@ -53,6 +54,28 @@
 
             <h2>Record a Pangolin Sighting</h2>
 
+            <button type="button" id="add_image_btn">Add a Photo</button>
+
+            <div id="photo_picker_container" class="photo_picker">
+                <div class="photo_picker_content">
+                    <div class="photo_picker_handle"></div>
+                    <h3>Add a Photo</h3>
+
+                    <button type="button" id="open_camera_btn">Take Photo with Camera</button>
+                    <button type="button" id="choose_image_btn">Choose Photo from Device</button>
+                    <button type="button" id="cancel_picker_btn">Cancel</button>
+                </div>
+            </div>
+
+            <input type="file" id="image_input" name="image_input" accept="image/*" hidden>
+
+            <div id="camera_container">
+                <button type="button" id="close_camera_btn">Close Camera</button>
+                <video id="video" autoplay playsinline></video>
+                <button type="button" id="capture_btn">Capture</button>
+                <canvas id="canvas" hidden></canvas>
+            </div>
+
             <label for="species">Species:</label>
             <input type="text" id="species" name="species" required>
 
@@ -68,8 +91,7 @@
             <select id="mortality_type" name="mortality_type">
                 <option value="" disabled selected>Select Mortality Type:</option>
                 <option value="Fence Death: Electrocution">Fence Death: Electrocution</option>
-                <option value="Fence Death: Caught on non-electrified fence">Fence Death: Caught on non-electrified
-                    fence</option>
+                <option value="Fence Death: Caught on non-electrified fence">Fence Death: Caught on non-electrified fence</option>
                 <option value="Road Death">Road Death</option>
                 <option value="Other">Other</option>
             </select>
@@ -83,31 +105,9 @@
         </form>
     </div>
 
-    <div id="camera_modal" class="camera_modal">
-
-        <button type="button" id="close_camera_btn">Close</button>
-        <video id="video" autoplay playsinline></video>
-        <button type="button" id="capture_btn">Capture</button>
-        <canvas id="canvas" hidden></canvas>
-
-        <div id="camera_preview_container">
-            <img id="camera_preview" alt="Captured photo">
-            <button type="button" id="retake_btn">Retake</button>
-            <button type="button" id="confirm_photo_btn">Use Photo</button>
-        </div>
-
-    </div>
-    <div id="image_modal">
-        <input id="image_input" name="image_input" type="file" accept="image/*" />
-        <video id="video"></video>
-        <button id="capture_btn">Capture</button>
-        <canvas id="canvas"></canvas>
-    </div>
-
-
     <div id="map_page">
         <p>Map Page!</p>
     </div>
-</body>
 
+</body>
 </html>

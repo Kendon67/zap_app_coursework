@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const context = canvas.getContext('2d');
     const captureBtn = document.getElementById('capture_btn');
 
+    const openCameraBtn = document.getElementById('open_camera_btn');
+    const closeCameraBtn = document.getElementById('close_camera_btn');
+
     // navigation button listeners
     mapPageBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -43,10 +46,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         sightingsPage.style.display = 'block';
     })
 
+    openCameraBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        startCamera();
+    })
+
     captureBtn.addEventListener('click', (e) => {
         e.preventDefault();
         capturePhoto();
     });
+
+    closeCameraBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        stopCamera();
+    })
 
     // hide mortality type box if status set to alive
     statusRadios.forEach(radio => {
@@ -64,7 +77,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     uploadBtn.addEventListener("click", (e) => {
         e.preventDefault();
         uploadFormContainer.style.display = "flex";
-        startCamera();
     })
 
     uploadForm.addEventListener("submit", (e) => {
