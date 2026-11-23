@@ -32,14 +32,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const photoPicker = document.getElementById('photo_picker_container');
     const addImageBtn = document.getElementById('add_image_btn');
+    const openCameraBtn = document.getElementById('open_camera_btn');
+    const chooseImageBtn = document.getElementById('choose_image_btn');
+    const imageInput = document.getElementById('image_input');
     const closePickerBtn = document.getElementById('close_picker_btn'); 
 
     const cameraContainer = document.getElementById('camera_container');
-    const openCameraBtn = document.getElementById('open_camera_btn');
     const closeCameraBtn = document.getElementById('close_camera_btn');
     const captureBtn = document.getElementById('capture_btn');
     const retakePhotoBtn = document.getElementById('retake_photo_btn');
-    flipCameraBtn = document.getElementById('flip_camera_btn');
+    const flipCameraBtn = document.getElementById('flip_camera_btn');
     const confirmPhotoBtn = document.getElementById('photo_confirm_btn');
 
     // navigation button listeners
@@ -59,6 +61,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     addImageBtn.addEventListener('click', (e) => {
         e.preventDefault();
         photoPicker.style.display = 'flex';
+    });
+
+    chooseImageBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearFile();
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file){
+            clearPhoto();
+            console.log(file);
+        }
     });
 
     // open camera overlay and start camera
@@ -272,6 +288,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // capture user photo and display it
     function capturePhoto() {
         if (width && height && streaming) {
+            clearFile();
             canvas.width = width;
             canvas.height = height;
     
@@ -295,6 +312,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         captureBtn.style.display = 'block';
         retakePhotoBtn.style.display = 'none';
         confirmPhotoBtn.style.display = 'none';
+    }
+
+    function clearFile() {
+        imageInput.value = '';
     }
 
     function hideAllPages() {
