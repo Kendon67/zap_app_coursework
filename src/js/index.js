@@ -225,6 +225,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (response.ok) {
                 alert('Sighting Successfully Uploaded!');
+                uploadForm.reset();
+                clearFile();
+                clearPhoto();
                 uploadFormContainer.style.display = "none";
                 await fetchSightings();
             } else {
@@ -319,7 +322,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // clear data stored as the photo and reset page
     function clearPhoto() {
-        selectedImage = null;
         context.clearRect(0, 0, canvas.width, canvas.height);
     
         canvas.style.display = 'none';
