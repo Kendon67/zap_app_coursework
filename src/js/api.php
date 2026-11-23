@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 require_once '../db/database.php';
 
 class sightingsAPI
@@ -28,7 +30,7 @@ class sightingsAPI
                 $this->getAllSightings();
                 break;
             case 'POST':
-                $this->addSighting();
+                $this->uploadSighting();
                 break;
             default:
                 $this->statuscode = 405;
@@ -65,7 +67,7 @@ class sightingsAPI
     }
 
     // add a sighting to the db
-    public function addSighting()
+    public function uploadSighting()
     {
         if (
             !isset(
@@ -114,6 +116,12 @@ class sightingsAPI
             return;
         }
 
+        $image = $this->validateImage();
+        if ($image === false) {
+            $this->statuscode = 400;
+            return;
+        }
+
         $sql = "INSERT INTO `sightings` (client_uuid, species, longitude, latitude, gps_accuracy,
                  date, status, mortality_type, notes) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -136,16 +144,28 @@ class sightingsAPI
             $notes
         );
 
-        if ($this->executeStatement($stmt)) {
-            $this->statuscode = 201;
-        }
-        $stmt->close();
+        // perform both POSTs, if either fail rollback the transaction
+        $this->database->begin_transaction();
+            if (!$this->executeStatement($stmt)) {
+                $stmt->close();
+                $this->database->rollback();
+                return;
+            }
+            $sightingId= $this->database->insert_id;
+            $stmt->close();
+
+            if ($image !== null && !$this->uploadImage($sightingId, $image)) {
+                $this->database->rollback();
+                return;
+            }
+            $this->database->commit();
+            $this->statuscode= 201;
     }
 
-    // upload image to image sightings, returning true if successfull to then continue addsighting()
+    // upload image to image sightings, returning true if successfull to then continue uploadSighting()
     private function uploadImage($sightingId, $image)
     {
-        $targetDir = '../uploads/';
+        $targetDir = '../images/';
         $tmp = tempnam($targetDir, 'img_');      
         $filename = basename($tmp) . '.' . $image['ext'];
 
@@ -157,8 +177,8 @@ class sightingsAPI
             return false;
         }
 
-        $sql = "INSERT INTO `sightings_images` (sighting_id, file_path) VALUES (?, ?)";
-        $filePath = 'uploads/' . $filename;
+        $sql = "INSERT INTO `sightings_images` (sighting_id, image_path) VALUES (?, ?)";
+        $filePath = 'images/' . $filename;
 
         $stmt = $this->prepareStmt($sql);
 
