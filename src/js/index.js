@@ -70,9 +70,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // stop camera stream and hide overlay
     closeCameraBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        clearPhoto();
+        stopCamera();
         cameraContainer.style.display = 'none';
         photoPicker.style.display = 'flex';
-        stopCamera();
     })
 
     captureBtn.addEventListener('click', (e) => {
@@ -82,12 +83,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     retakePhotoBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        stopCamera();
-        startCamera();
+        clearPhoto();
     })
 
     confirmPhotoBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        stopCamera();
         cameraContainer.style.display = 'none';
     })
 
@@ -273,6 +274,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             retakePhotoBtn.style.display = 'block';
             confirmPhotoBtn.style.display = 'block';
         }
+    }
+
+    // clear data stored as the photo and reset page
+    function clearPhoto() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    
+        canvas.style.display = 'none';
+        video.style.display = 'block';
+    
+        captureBtn.style.display = 'block';
+        retakePhotoBtn.style.display = 'none';
+        confirmPhotoBtn.style.display = 'none';
     }
 
     function hideAllPages() {
