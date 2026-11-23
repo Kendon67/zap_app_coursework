@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const openCameraBtn = document.getElementById('open_camera_btn');
     const closeCameraBtn = document.getElementById('close_camera_btn');
     const captureBtn = document.getElementById('capture_btn');
+    const retakePhotoBtn = document.getElementById('retake_photo_btn');
 
     // navigation button listeners
     mapPageBtn.addEventListener('click', (e) => {
@@ -77,6 +78,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         capturePhoto();
     });
+
+    retakePhotoBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        stopCamera();
+        startCamera();
+    })
 
     closePickerBtn.addEventListener('click', (e) => {
         e.preventDefault();

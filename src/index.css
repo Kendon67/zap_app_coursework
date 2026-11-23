@@ -261,7 +261,7 @@ button {
     cursor: pointer;
 }
 
-#close_camera_btn {
+.camera_btn {
     align-self: flex-start;
     padding: 12px;
     background: transparent;

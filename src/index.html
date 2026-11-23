@@ -62,16 +62,17 @@
                     <h3>Add a Photo</h3>
                     <button type="button" id="open_camera_btn">Take Photo with Camera</button>
                     <button type="button" id="choose_image_btn">Choose Photo from Device</button>
-                    <button type="button" id="close_picker_btn">Close</button>
+                    <button id="close_picker_btn">Close</button>
                 </div>
             </div>
 
             <input type="file" id="image_input" name="image_input" accept="image/*" hidden>
 
             <div id="camera_container">
-                <button type="button" id="close_camera_btn">Close Camera</button>
+                <button class="camera_btn" id="close_camera_btn">Close Camera</button>
                 <video id="video" autoplay playsinline></video>
                 <button type="button" id="capture_btn">Capture</button>
+                <button class="camera_btn" id="retake_photo_btn">Retake Photo</button>
                 <canvas id="canvas" hidden></canvas>
             </div>
 
