@@ -142,6 +142,38 @@ class sightingsAPI
         $stmt->close();
     }
 
+    // upload image to image sightings, returning true if successfull to then continue addsighting()
+    private function uploadImage($sightingId, $image)
+    {
+        $targetDir = '../uploads/';
+        $tmp = tempnam($targetDir, 'img_');      
+        $filename = basename($tmp) . '.' . $image['ext'];
+
+        $fileMoved = move_uploaded_file($image['tmp'], $targetDir . $filename);
+        unlink($tmp);                            
+
+        if (!$fileMoved) {
+            $this->statuscode = 500;
+            return false;
+        }
+
+        $sql = "INSERT INTO `sightings_images` (sighting_id, file_path) VALUES (?, ?)";
+        $filePath = 'uploads/' . $filename;
+
+        $stmt = $this->prepareStmt($sql);
+
+        if (!$stmt){
+            return false;
+        }
+
+        $stmt->bind_param("is", $sightingId, $filePath);
+        if ($this->executeStatement($stmt)){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     // prepare statement for execution
     private function prepareStmt(string $sql): mysqli_stmt|false
     {
@@ -180,8 +212,9 @@ class sightingsAPI
             'Fence Death: Electrocution',
             'Fence Death: Caught on non-electrified fence',
             'Road Death',
-            'Other'];
-        
+            'Other'
+        ];
+
         if ($mortality_type == null || in_array($mortality_type, $allowedTypes)) {
             return true;
         } else {
@@ -204,6 +237,33 @@ class sightingsAPI
             return false;
         }
         return true;
+    }
+
+    // validates image for if its set, size, upload errors, and if the true extension is allowed
+    private function validateImage()
+    {
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+
+        $file = $_FILES['image'];
+
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            return false;
+        }
+
+        if ($file['size'] > 2000000) {
+            return false;
+        }
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimetype = $finfo->file($file['tmp_name']);
+        $allowedExtensions = array('image/jpeg' => 'jpg', 'image/png' => 'png');
+
+        if (!isset($allowedExtensions[$mimetype])) {
+            return false;
+        }
+        return ['tmp' => $file['tmp_name'], 'ext' => $allowedExtensions[$mimetype]];
     }
 }
 
