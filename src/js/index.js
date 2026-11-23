@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const closeCameraBtn = document.getElementById('close_camera_btn');
     const photoPicker = document.getElementById('photo_picker_container');
     const addImageBtn = document.getElementById('add_image_btn');
+    const closePickerBtn = document.getElementById('close_picker_btn'); 
 
     // navigation button listeners
     mapPageBtn.addEventListener('click', (e) => {
@@ -66,6 +67,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeCameraBtn.addEventListener('click', (e) => {
         e.preventDefault();
         stopCamera();
+    })
+
+    closePickerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        photoPicker.style.display = 'none';
     })
 
     // hide mortality type box if status set to alive
