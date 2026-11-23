@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const width = 320;
     let height = 0;
     let streaming = false;
+    let cameraFacing = 'environment';
 
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
@@ -38,6 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const closeCameraBtn = document.getElementById('close_camera_btn');
     const captureBtn = document.getElementById('capture_btn');
     const retakePhotoBtn = document.getElementById('retake_photo_btn');
+    flipCameraBtn = document.getElementById('flip_camera_btn');
     const confirmPhotoBtn = document.getElementById('photo_confirm_btn');
 
     // navigation button listeners
@@ -84,6 +86,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     retakePhotoBtn.addEventListener('click', (e) => {
         e.preventDefault();
         clearPhoto();
+    })
+
+    flipCameraBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        stopCamera();
+        cameraFacing = cameraFacing === 'environment' ? 'user' : 'environment';
+        startCamera();
     })
 
     confirmPhotoBtn.addEventListener('click', (e) => {
@@ -227,7 +236,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function startCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
+                video: {facingMode: cameraFacing},
                 audio: false
             });
     
