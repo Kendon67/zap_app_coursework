@@ -259,12 +259,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // capture user photo and display it
     function capturePhoto() {
         if (width && height && streaming) {
             canvas.width = width;
             canvas.height = height;
     
             context.drawImage(video, 0, 0, width, height);
+
+            video.style.display = 'none';
+            canvas.style.display = 'block';
+            captureBtn.style.display = 'none';
+            retakePhotoBtn.style.display = 'block';
+            confirmPhotoBtn.style.display = 'block';
         }
     }
 
