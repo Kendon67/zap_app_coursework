@@ -28,46 +28,55 @@ document.addEventListener('DOMContentLoaded', async () => {
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
-    const captureBtn = document.getElementById('capture_btn');
 
-    const openCameraBtn = document.getElementById('open_camera_btn');
-    const closeCameraBtn = document.getElementById('close_camera_btn');
     const photoPicker = document.getElementById('photo_picker_container');
     const addImageBtn = document.getElementById('add_image_btn');
     const closePickerBtn = document.getElementById('close_picker_btn'); 
+
+    const cameraContainer = document.getElementById('camera_container');
+    const openCameraBtn = document.getElementById('open_camera_btn');
+    const closeCameraBtn = document.getElementById('close_camera_btn');
+    const captureBtn = document.getElementById('capture_btn');
 
     // navigation button listeners
     mapPageBtn.addEventListener('click', (e) => {
         e.preventDefault();
         hideAllPages();
         mapPage.style.display = 'flex';
-    })
+    });
 
     sightingsPageBtn.addEventListener('click', (e) => {
         e.preventDefault();
         hideAllPages();
         sightingsPage.style.display = 'block';
-    })
+    });
 
+    // open picker for image upload options
     addImageBtn.addEventListener('click', (e) => {
         e.preventDefault();
         photoPicker.style.display = 'flex';
-    })
+    });
 
+    // open camera overlay and start camera
     openCameraBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        photoPicker.style.display = 'none';
+        cameraContainer.style.display = 'flex';
         startCamera();
+    });
+
+    // stop camera stream and hide overlay
+    closeCameraBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        cameraContainer.style.display = 'none';
+        photoPicker.style.display = 'flex';
+        stopCamera();
     })
 
     captureBtn.addEventListener('click', (e) => {
         e.preventDefault();
         capturePhoto();
     });
-
-    closeCameraBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        stopCamera();
-    })
 
     closePickerBtn.addEventListener('click', (e) => {
         e.preventDefault();
