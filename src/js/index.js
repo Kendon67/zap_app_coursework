@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let height = 0;
     let streaming = false;
     let cameraFacing = 'environment';
+    let selectedImage = null;
 
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const file = e.target.files[0];
         if (file){
             clearPhoto();
-            console.log(file);
+            selectedImage = file;
         }
     });
 
@@ -113,8 +114,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     confirmPhotoBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        stopCamera();
-        cameraContainer.style.display = 'none';
+        canvas.toBlob((blob) => {
+            if (blob) {
+                selectedImage = new File([blob], 'photo.jpg', {
+                    type: 'image/jpeg'
+                });
+    
+                stopCamera();
+                cameraContainer.style.display = 'none';
+            }
+        }, 'image/jpeg');
     })
 
     closePickerBtn.addEventListener('click', (e) => {
@@ -149,6 +158,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeFormBtn.addEventListener("click", (e) => {
         e.preventDefault();
         uploadForm.reset();
+        clearFile();
+        clearPhoto();
         uploadFormContainer.style.display = 'none';
     })
 
@@ -203,6 +214,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             sightingData.append("client_uuid", getUUID());
             sightingData.append("date", getDate());
 
+            if (selectedImage) {
+                sightingData.append("image", selectedImage);
+            }
+
             const response = await fetch('../api/api.php', {
                 method: "POST",
                 body: sightingData
@@ -235,18 +250,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function getUUID() {
         return crypto.randomUUID();
-    }
+    };
 
     function getDate() {
         const date = new Date().toISOString().split('T')[0];
         return date;
-    }
+    };
 
     function showPosition(position) {
         lat = position.coords.latitude;
         long = position.coords.longitude
         accuracy = position.coords.accuracy
-    }
+    };
 
     // ask user for camera permission and start stream feed
     async function startCamera() {
@@ -262,7 +277,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 
     video.addEventListener('canplay', () => {
         if (!streaming){
@@ -274,7 +289,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             canvas.setAttribute("height", height);
             streaming = true;
         }
-    })
+    });
 
     // check for all open camera streams then stop them
     function stopCamera() {
@@ -283,7 +298,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             videoStream.getTracks().forEach(track => track.stop());
             video.srcObject = null;
         }
-    }
+    };
 
     // capture user photo and display it
     function capturePhoto() {
@@ -300,10 +315,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             retakePhotoBtn.style.display = 'block';
             confirmPhotoBtn.style.display = 'block';
         }
-    }
+    };
 
     // clear data stored as the photo and reset page
     function clearPhoto() {
+        selectedImage = null;
         context.clearRect(0, 0, canvas.width, canvas.height);
     
         canvas.style.display = 'none';
@@ -312,14 +328,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         captureBtn.style.display = 'block';
         retakePhotoBtn.style.display = 'none';
         confirmPhotoBtn.style.display = 'none';
-    }
+    };
 
     function clearFile() {
+        selectedImage = null;
         imageInput.value = '';
-    }
+    };
 
     function hideAllPages() {
         sightingsPage.style.display = 'none';
         mapPage.style.display = 'none';
-    }
+    };
 });
