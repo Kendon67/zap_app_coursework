@@ -46,7 +46,8 @@ class sightingsAPI
     {
         $this->statuscode = 400;
 
-        $sql = "SELECT * FROM `sightings`";
+        $sql = "SELECT s.*, si.image_path FROM `sightings` s
+        LEFT JOIN `sightings_images` si ON si.sighting_id = s.id" ;
         $stmt = $this->prepareStmt($sql);
         if (!$stmt) {
             return;

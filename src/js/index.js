@@ -188,6 +188,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         sightingsArray.forEach(sighting => {
             const sightingCard = document.createElement('div');
             sightingCard.classList.add('card');
+
+            if (sighting.image_path) {
+                const img = document.createElement('img');
+                img.src = '../' + sighting.image_path;
+                img.alt = `Photo of ${sighting.species}`;
+                img.loading = 'lazy';
+                sightingCard.appendChild(img);
+            }
+            
             sightingCard.innerHTML = `
                 <h3>${sighting.species}</h3>
                 <p>Status: ${sighting.status}</p>
