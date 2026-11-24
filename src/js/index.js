@@ -279,6 +279,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     
         } catch (e) {
             console.error(e);
+
+            const errors = {
+                NotFoundError: "No camera was found.", 
+                NotAllowedError: "Camera access denied. Please enable camera in browser settings",
+                NotReadableError: "Camera is currently being used by another app."
+            };
+
+            alert(errors[e.name] || "Camera couldn't start.")
+            cameraContainer.style.display = 'none';
+            photoPicker.style.display = 'flex';
         }
     };
 
