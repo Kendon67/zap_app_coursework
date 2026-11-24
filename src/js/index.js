@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const openCameraBtn = document.getElementById('open_camera_btn');
     const chooseImageBtn = document.getElementById('choose_image_btn');
     const imageInput = document.getElementById('image_input');
-    const closePickerBtn = document.getElementById('close_picker_btn'); 
+    const closePickerBtn = document.getElementById('close_picker_btn');
 
     const cameraContainer = document.getElementById('camera_container');
     const closeCameraBtn = document.getElementById('close_camera_btn');
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     imageInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
-        if (file){
+        if (file) {
             clearPhoto();
             selectedImage = file;
         }
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 selectedImage = new File([blob], 'photo.jpg', {
                     type: 'image/jpeg'
                 });
-    
+
                 stopCamera();
                 cameraContainer.style.display = 'none';
             }
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 img.loading = 'lazy';
                 sightingCard.appendChild(img);
             }
-            
+
             sightingCard.innerHTML = `
                 <h3>${sighting.species}</h3>
                 <p>Status: ${sighting.status}</p>
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 uploadFormContainer.style.display = "none";
                 await fetchSightings();
             } else {
-                alert("Something went wrong") // update this
+                alert("Upload Attempt Failed, Please Try Again.") // update this
             }
         } catch (e) {
             alert("Something Went Wrong. Please Try Again");
@@ -279,18 +279,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function startCamera() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: {facingMode: cameraFacing},
+                video: { facingMode: cameraFacing },
                 audio: false
             });
-    
+
             video.srcObject = stream;
             await video.play();
-    
+
         } catch (e) {
             console.error(e);
 
             const errors = {
-                NotFoundError: "No camera was found.", 
+                NotFoundError: "No camera was found.",
                 NotAllowedError: "Camera access denied. Please enable camera in browser settings",
                 NotReadableError: "Camera is currently being used by another app."
             };
@@ -302,14 +302,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     video.addEventListener('canplay', () => {
-        if (!streaming){
-            height = video.videoHeight / (video.videoWidth / width);
+        try {
+            if (!streaming) {
+                height = video.videoHeight / (video.videoWidth / width);
 
-            video.setAttribute("width", width);
-            video.setAttribute("height", height);
-            canvas.setAttribute("width", width);
-            canvas.setAttribute("height", height);
-            streaming = true;
+                video.setAttribute("width", width);
+                video.setAttribute("height", height);
+                canvas.setAttribute("width", width);
+                canvas.setAttribute("height", height);
+                streaming = true;
+            };
+        } catch (e) { 
+            alert("Camera Couldn't Start, Please Try Again.");
         }
     });
 
@@ -328,7 +332,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             clearFile();
             canvas.width = width;
             canvas.height = height;
-    
+
             context.drawImage(video, 0, 0, width, height);
 
             video.style.display = 'none';
@@ -342,10 +346,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // clear data stored as the photo and reset page
     function clearPhoto() {
         context.clearRect(0, 0, canvas.width, canvas.height);
-    
+
         canvas.style.display = 'none';
         video.style.display = 'block';
-    
+
         captureBtn.style.display = 'block';
         retakePhotoBtn.style.display = 'none';
         confirmPhotoBtn.style.display = 'none';
