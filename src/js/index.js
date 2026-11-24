@@ -20,26 +20,124 @@ document.addEventListener('DOMContentLoaded', async () => {
     const uploadBtn = document.getElementById('upload_btn');
     const closeFormBtn = document.getElementById('close_form_btn');
 
+    // camera varaiables
+    const width = 320;
+    let height = 0;
+    let streaming = false;
+    let cameraFacing = 'environment';
+    let selectedImage = null;
+
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+
+    const photoPicker = document.getElementById('photo_picker_container');
+    const addImageBtn = document.getElementById('add_image_btn');
+    const openCameraBtn = document.getElementById('open_camera_btn');
+    const chooseImageBtn = document.getElementById('choose_image_btn');
+    const imageInput = document.getElementById('image_input');
+    const closePickerBtn = document.getElementById('close_picker_btn'); 
+
+    const cameraContainer = document.getElementById('camera_container');
+    const closeCameraBtn = document.getElementById('close_camera_btn');
+    const captureBtn = document.getElementById('capture_btn');
+    const retakePhotoBtn = document.getElementById('retake_photo_btn');
+    const flipCameraBtn = document.getElementById('flip_camera_btn');
+    const confirmPhotoBtn = document.getElementById('photo_confirm_btn');
+
     // navigation button listeners
-    mapPageBtn.addEventListener('click', (e) =>{
+    mapPageBtn.addEventListener('click', (e) => {
         e.preventDefault();
         hideAllPages();
         mapPage.style.display = 'flex';
-    })
+    });
 
-    sightingsPageBtn.addEventListener('click', (e) =>{
+    sightingsPageBtn.addEventListener('click', (e) => {
         e.preventDefault();
         hideAllPages();
         sightingsPage.style.display = 'block';
+    });
+
+    // open picker for image upload options
+    addImageBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        photoPicker.style.display = 'flex';
+    });
+
+    chooseImageBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearFile();
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file){
+            clearPhoto();
+            selectedImage = file;
+        }
+    });
+
+    // open camera overlay and start camera
+    openCameraBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        photoPicker.style.display = 'none';
+        cameraContainer.style.display = 'flex';
+        startCamera();
+    });
+
+    // stop camera stream and hide overlay
+    closeCameraBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearPhoto();
+        stopCamera();
+        cameraContainer.style.display = 'none';
+        photoPicker.style.display = 'flex';
+    })
+
+    captureBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        capturePhoto();
+    });
+
+    retakePhotoBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearPhoto();
+    })
+
+    flipCameraBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        stopCamera();
+        cameraFacing = cameraFacing === 'environment' ? 'user' : 'environment';
+        startCamera();
+    })
+
+    confirmPhotoBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        canvas.toBlob((blob) => {
+            if (blob) {
+                selectedImage = new File([blob], 'photo.jpg', {
+                    type: 'image/jpeg'
+                });
+    
+                stopCamera();
+                cameraContainer.style.display = 'none';
+            }
+        }, 'image/jpeg');
+    })
+
+    closePickerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        photoPicker.style.display = 'none';
     })
 
     // hide mortality type box if status set to alive
     statusRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
-            if (e.target.value == "Alive"){
+            if (e.target.value == "Alive") {
                 mortalitySelection.style.display = 'none';
                 mortalitySelection.value = '';
-            } else if (e.target.value == "Dead"){
+            } else if (e.target.value == "Dead") {
                 mortalitySelection.style.display = 'flex';
                 mortalitySelection.value = '';
             }
@@ -60,6 +158,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeFormBtn.addEventListener("click", (e) => {
         e.preventDefault();
         uploadForm.reset();
+        clearFile();
+        clearPhoto();
         uploadFormContainer.style.display = 'none';
     })
 
@@ -88,6 +188,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         sightingsArray.forEach(sighting => {
             const sightingCard = document.createElement('div');
             sightingCard.classList.add('card');
+
+            if (sighting.image_path) {
+                const img = document.createElement('img');
+                img.src = '../' + sighting.image_path;
+                img.alt = `Photo of ${sighting.species}`;
+                img.loading = 'lazy';
+                sightingCard.appendChild(img);
+            }
+            
             sightingCard.innerHTML = `
                 <h3>${sighting.species}</h3>
                 <p>Status: ${sighting.status}</p>
@@ -105,7 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // upload a new sighting to the db
     async function uploadSighting() {
         try {
-            const sightingData = new FormData(uploadForm); 
+            const sightingData = new FormData(uploadForm);
             await getLocation();
 
             sightingData.append("latitude", lat);
@@ -114,6 +223,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             sightingData.append("client_uuid", getUUID());
             sightingData.append("date", getDate());
 
+            if (selectedImage) {
+                sightingData.append("image", selectedImage);
+            }
+
             const response = await fetch('../api/api.php', {
                 method: "POST",
                 body: sightingData
@@ -121,6 +234,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (response.ok) {
                 alert('Sighting Successfully Uploaded!');
+                uploadForm.reset();
+                clearFile();
+                clearPhoto();
                 uploadFormContainer.style.display = "none";
                 await fetchSightings();
             } else {
@@ -146,22 +262,102 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function getUUID() {
         return crypto.randomUUID();
-    }
-    
-    function getDate(){
+    };
+
+    function getDate() {
         const date = new Date().toISOString().split('T')[0];
         return date;
-    }
+    };
 
     function showPosition(position) {
         lat = position.coords.latitude;
         long = position.coords.longitude
         accuracy = position.coords.accuracy
-    }
+    };
 
+    // ask user for camera permission and start stream feed
+    async function startCamera() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {facingMode: cameraFacing},
+                audio: false
+            });
+    
+            video.srcObject = stream;
+            await video.play();
+    
+        } catch (e) {
+            console.error(e);
 
-    function hideAllPages(){
+            const errors = {
+                NotFoundError: "No camera was found.", 
+                NotAllowedError: "Camera access denied. Please enable camera in browser settings",
+                NotReadableError: "Camera is currently being used by another app."
+            };
+
+            alert(errors[e.name] || "Camera couldn't start.")
+            cameraContainer.style.display = 'none';
+            photoPicker.style.display = 'flex';
+        }
+    };
+
+    video.addEventListener('canplay', () => {
+        if (!streaming){
+            height = video.videoHeight / (video.videoWidth / width);
+
+            video.setAttribute("width", width);
+            video.setAttribute("height", height);
+            canvas.setAttribute("width", width);
+            canvas.setAttribute("height", height);
+            streaming = true;
+        }
+    });
+
+    // check for all open camera streams then stop them
+    function stopCamera() {
+        const videoStream = video.srcObject;
+        if (videoStream) {
+            videoStream.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+        }
+    };
+
+    // capture user photo and display it
+    function capturePhoto() {
+        if (width && height && streaming) {
+            clearFile();
+            canvas.width = width;
+            canvas.height = height;
+    
+            context.drawImage(video, 0, 0, width, height);
+
+            video.style.display = 'none';
+            canvas.style.display = 'block';
+            captureBtn.style.display = 'none';
+            retakePhotoBtn.style.display = 'block';
+            confirmPhotoBtn.style.display = 'block';
+        }
+    };
+
+    // clear data stored as the photo and reset page
+    function clearPhoto() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    
+        canvas.style.display = 'none';
+        video.style.display = 'block';
+    
+        captureBtn.style.display = 'block';
+        retakePhotoBtn.style.display = 'none';
+        confirmPhotoBtn.style.display = 'none';
+    };
+
+    function clearFile() {
+        selectedImage = null;
+        imageInput.value = '';
+    };
+
+    function hideAllPages() {
         sightingsPage.style.display = 'none';
         mapPage.style.display = 'none';
-    }
+    };
 });

@@ -28,7 +28,7 @@ class sightingsAPI
                 $this->getAllSightings();
                 break;
             case 'POST':
-                $this->addSighting();
+                $this->uploadSighting();
                 break;
             default:
                 $this->statuscode = 405;
@@ -46,7 +46,8 @@ class sightingsAPI
     {
         $this->statuscode = 400;
 
-        $sql = "SELECT * FROM `sightings`";
+        $sql = "SELECT s.*, si.image_path FROM `sightings` s
+        LEFT JOIN `sightings_images` si ON si.sighting_id = s.id" ;
         $stmt = $this->prepareStmt($sql);
         if (!$stmt) {
             return;
@@ -65,7 +66,7 @@ class sightingsAPI
     }
 
     // add a sighting to the db
-    public function addSighting()
+    public function uploadSighting()
     {
         if (
             !isset(
@@ -114,6 +115,12 @@ class sightingsAPI
             return;
         }
 
+        $image = $this->validateImage();
+        if ($image === false) {
+            $this->statuscode = 400;
+            return;
+        }
+
         $sql = "INSERT INTO `sightings` (client_uuid, species, longitude, latitude, gps_accuracy,
                  date, status, mortality_type, notes) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -136,10 +143,54 @@ class sightingsAPI
             $notes
         );
 
-        if ($this->executeStatement($stmt)) {
-            $this->statuscode = 201;
+        // perform both POSTs, if either fail rollback the transaction
+        $this->database->begin_transaction();
+            if (!$this->executeStatement($stmt)) {
+                $stmt->close();
+                $this->database->rollback();
+                return;
+            }
+            $sightingId= $this->database->insert_id;
+            $stmt->close();
+
+            if ($image !== null && !$this->uploadImage($sightingId, $image)) {
+                $this->database->rollback();
+                return;
+            }
+            $this->database->commit();
+            $this->statuscode= 201;
+    }
+
+    // upload image to image sightings, returning true if successfull to then continue uploadSighting()
+    private function uploadImage($sightingId, $image)
+    {
+        $targetDir = '../images/';
+        $tmp = tempnam($targetDir, 'img_');      
+        $filename = basename($tmp) . '.' . $image['ext'];
+
+        $fileMoved = move_uploaded_file($image['tmp'], $targetDir . $filename);
+        unlink($tmp);                            
+
+        if (!$fileMoved) {
+            $this->statuscode = 500;
+            return false;
         }
-        $stmt->close();
+
+        $sql = "INSERT INTO `sightings_images` (sighting_id, image_path) VALUES (?, ?)";
+        $filePath = 'images/' . $filename;
+
+        $stmt = $this->prepareStmt($sql);
+
+        if (!$stmt){
+            return false;
+        }
+
+        $stmt->bind_param("is", $sightingId, $filePath);
+        if ($this->executeStatement($stmt)){
+            return true;
+        } else{
+            return false;
+        }
     }
 
     // prepare statement for execution
@@ -180,8 +231,9 @@ class sightingsAPI
             'Fence Death: Electrocution',
             'Fence Death: Caught on non-electrified fence',
             'Road Death',
-            'Other'];
-        
+            'Other'
+        ];
+
         if ($mortality_type == null || in_array($mortality_type, $allowedTypes)) {
             return true;
         } else {
@@ -204,6 +256,33 @@ class sightingsAPI
             return false;
         }
         return true;
+    }
+
+    // validates image for if its set, size, upload errors, and if the true extension is allowed
+    private function validateImage()
+    {
+        if (!isset($_FILES['image']) || $_FILES['image']['error'] === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+
+        $file = $_FILES['image'];
+
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            return false;
+        }
+
+        if ($file['size'] > 2000000) {
+            return false;
+        }
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimetype = $finfo->file($file['tmp_name']);
+        $allowedExtensions = array('image/jpeg' => 'jpg', 'image/png' => 'png');
+
+        if (!isset($allowedExtensions[$mimetype])) {
+            return false;
+        }
+        return ['tmp' => $file['tmp_name'], 'ext' => $allowedExtensions[$mimetype]];
     }
 }
 

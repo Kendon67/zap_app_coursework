@@ -1,3 +1,4 @@
+
 <!doctype html>
 
 <html lang="en">
@@ -5,7 +6,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-
     <link href="./index.css" rel="stylesheet">
     <script src="./index.js" defer></script>
 
@@ -54,6 +54,30 @@
 
             <h2>Record a Pangolin Sighting</h2>
 
+            <button type="button" id="add_image_btn">Add a Photo</button>
+
+            <div id="photo_picker_container" class="photo_picker">
+                <div class="photo_picker_content">
+                    <div class="photo_picker_handle"></div>
+                    <h3>Add a Photo</h3>
+                    <button type="button" id="open_camera_btn">Take Photo with Camera</button>
+                    <button type="button" id="choose_image_btn">Choose Photo from Device</button>
+                    <button id="close_picker_btn">Close</button>
+                </div>
+            </div>
+
+            <input type="file" id="image_input" accept="image/*" hidden>
+
+            <div id="camera_container">
+                <button class="camera_btn" id="close_camera_btn">Close Camera</button>
+                <button class="camera_btn" id="flip_camera_btn">Flip Camera</button>
+                <button class="camera_btn" id="photo_confirm_btn">Done</button>
+                <video id="video" autoplay playsinline></video>
+                <button type="button" id="capture_btn">Capture</button>
+                <button class="camera_btn" id="retake_photo_btn">Retake Photo</button>
+                <canvas id="canvas"></canvas>
+            </div>
+
             <label for="species">Species:</label>
             <input type="text" id="species" name="species" required>
 
@@ -69,8 +93,7 @@
             <select id="mortality_type" name="mortality_type">
                 <option value="" disabled selected>Select Mortality Type:</option>
                 <option value="Fence Death: Electrocution">Fence Death: Electrocution</option>
-                <option value="Fence Death: Caught on non-electrified fence">Fence Death: Caught on non-electrified
-                    fence</option>
+                <option value="Fence Death: Caught on non-electrified fence">Fence Death: Caught on non-electrified fence</option>
                 <option value="Road Death">Road Death</option>
                 <option value="Other">Other</option>
             </select>
@@ -79,7 +102,7 @@
             <textarea id="notes" name="notes" rows="4"></textarea>
 
             <button type="submit" id="submit_btn">Submit Sighting</button>
-            <button id="close_form_btn">Close Form</button>
+            <button type="button" id="close_form_btn">Close Form</button>
 
         </form>
     </div>
@@ -87,6 +110,6 @@
     <div id="map_page">
         <p>Map Page!</p>
     </div>
-</body>
 
+</body>
 </html>
