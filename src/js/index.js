@@ -377,6 +377,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const json = JSON.stringify(Object.fromEntries(formFields));
         localStorage.setItem('form', json);
     });
+
+    window.addEventListener('online', () => {
+        fetchSightings();
+    })
         
     // load form from previous session if exists
     const json = localStorage.getItem('form')
