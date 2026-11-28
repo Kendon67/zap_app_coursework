@@ -300,6 +300,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         startCamera();
     })
 
+    // save photo file for use in API 
     confirmPhotoBtn.addEventListener('click', (e) => {
         e.preventDefault();
         canvas.toBlob((blob) => {
@@ -372,7 +373,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.addEventListener('pagehide', () => {
         // store data from upload form
         const formFields = new FormData(uploadForm);
-        formFields.delete(imageInput.name); // add this
+        formFields.delete(imageInput.name); 
         const json = JSON.stringify(Object.fromEntries(formFields));
         localStorage.setItem('form', json);
     });
@@ -388,8 +389,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             mortalitySelection.style.display = form.status === 'Dead' ? 'flex' : 'none';
-    }
-
+    };
 
     await fetchSightings();
 });
