@@ -369,6 +369,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
 
+    window.addEventListener('pagehide', () => {
+        // store data from upload form
+        const formFields = new FormData(uploadForm);
+        formFields.delete(imageInput.name); // add this
+        const json = JSON.stringify(Object.fromEntries(formFields));
+        localStorage.setItem('form', json);
+    });
+        
+    // load form from previous session if exists
+    const json = localStorage.getItem('form')
+        if (json) {
+            const form = JSON.parse(json);
+        
+            Object.entries(form).forEach(([name, value]) => {
+                const field = uploadForm.elements.namedItem(name)
+                if (field) field.value = value;
+            });
+
+            mortalitySelection.style.display = form.status === 'Dead' ? 'flex' : 'none';
+    }
 
 
     await fetchSightings();
